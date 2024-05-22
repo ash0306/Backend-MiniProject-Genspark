@@ -16,10 +16,16 @@ namespace CoffeeStoreApplication
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
 
-            #region contexts
+            #region Contexts
             builder.Services.AddDbContext<CoffeeStoreContext>(
                 options => options.UseSqlServer(builder.Configuration.GetConnectionString("defaultConnection"))
                 );
+            #endregion
+
+            #region Repositories
+            #endregion
+
+            #region Services
             #endregion
 
             var app = builder.Build();
