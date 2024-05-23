@@ -1,7 +1,10 @@
 using CoffeeStoreApplication.Contexts;
 using CoffeeStoreApplication.Interfaces;
 using CoffeeStoreApplication.Models;
+using CoffeeStoreApplication.Models.DTOs.Customer;
+using CoffeeStoreApplication.Models.DTOs.Employee;
 using CoffeeStoreApplication.Repositories;
+using CoffeeStoreApplication.Services;
 using Microsoft.EntityFrameworkCore;
 
 namespace CoffeeStoreApplication
@@ -35,6 +38,7 @@ namespace CoffeeStoreApplication
             #endregion
 
             #region Services
+            builder.Services.AddScoped<ITokenService, TokenService>();
             #endregion
 
             var app = builder.Build();

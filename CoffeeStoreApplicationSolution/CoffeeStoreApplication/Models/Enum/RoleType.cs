@@ -4,6 +4,7 @@
     {
         Admin,
         Manager,
-        Barista
+        Barista,
+        Customer
     }
 }
