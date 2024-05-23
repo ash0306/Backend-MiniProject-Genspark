@@ -1,4 +1,7 @@
 using CoffeeStoreApplication.Contexts;
+using CoffeeStoreApplication.Interfaces;
+using CoffeeStoreApplication.Models;
+using CoffeeStoreApplication.Repositories;
 using Microsoft.EntityFrameworkCore;
 
 namespace CoffeeStoreApplication
@@ -23,6 +26,12 @@ namespace CoffeeStoreApplication
             #endregion
 
             #region Repositories
+            builder.Services.AddScoped<IRepository<int, Customer>, CustomerRepository>();
+            builder.Services.AddScoped<IRepository<int, CustomerOrder>, CustomerOrderRepository>();
+            builder.Services.AddScoped<IRepository<int, Product>, ProductRepository>();
+            builder.Services.AddScoped<IRepository<int, Order>, OrderRepository>();
+            builder.Services.AddScoped<IRepository<int, OrderItem>, OrderItemRepository>();
+            builder.Services.AddScoped<IRepository<int, Employee>, EmployeeRepository>();
             #endregion
 
             #region Services

@@ -2,8 +2,8 @@
 {
     public enum ProductStatus
     {
-        Available,
         Unavailable,
+        Available,
         Discontinued
     }
 }
