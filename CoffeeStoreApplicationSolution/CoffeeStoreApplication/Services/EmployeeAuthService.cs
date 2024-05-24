@@ -39,6 +39,11 @@ namespace CoffeeStoreApplication.Services
                 employee.PasswordHashKey = hMACSHA.Key;
                 employee.HashedPassword = hMACSHA.ComputeHash(Encoding.UTF8.GetBytes(registerDTO.Password));
                 employee.Role = role;
+                if(role == RoleType.Admin)
+                {
+                    employee.Status = EmployeeStatus.Active;
+                }
+                employee.Status = EmployeeStatus.Inactive;
 
                 var newEmployee = await _repository.Add(employee);
 
@@ -58,6 +63,11 @@ namespace CoffeeStoreApplication.Services
             if (employee == null)
             {
                 throw new UnauthorizedUserException("Invalid email or password");
+            }
+
+            if(employee.Status == EmployeeStatus.Inactive)
+            {
+                throw new UnauthorizedUserException($"User not activated");
             }
 
             HMACSHA256 hMACSHA256 = new HMACSHA256(employee.PasswordHashKey);

@@ -15,6 +15,6 @@ namespace CoffeeStoreApplication.Models
         public byte[] PasswordHashKey { get; set; }
         public DateTime DateOfBirth { get; set; }
         public RoleType Role { get; set; }
-        public float Salary { get; set; }
+        public float? Salary { get; set; } = null;
     }
 }
