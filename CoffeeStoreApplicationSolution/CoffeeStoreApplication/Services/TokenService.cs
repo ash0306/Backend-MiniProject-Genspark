@@ -3,6 +3,7 @@ using CoffeeStoreApplication.Models;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using System.Security.Cryptography.Xml;
 using System.Text;
 
 namespace CoffeeStoreApplication.Services
@@ -23,7 +24,8 @@ namespace CoffeeStoreApplication.Services
             var claims = new List<Claim>(){
                 new Claim(ClaimTypes.NameIdentifier, customer.Id.ToString()),
                 new Claim(ClaimTypes.Name, customer.Name),
-                new Claim(ClaimTypes.Email, customer.Email)
+                new Claim(ClaimTypes.Email, customer.Email),
+                new Claim(ClaimTypes.Role, "Customer")
             };
             var credentials = new SigningCredentials(_key, SecurityAlgorithms.HmacSha256);
             var myToken = new JwtSecurityToken(null, null, claims, expires: DateTime.Now.AddDays(2), signingCredentials: credentials);

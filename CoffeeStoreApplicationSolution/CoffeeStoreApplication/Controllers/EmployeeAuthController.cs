@@ -5,6 +5,7 @@ using CoffeeStoreApplication.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using CoffeeStoreApplication.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 
 namespace CoffeeStoreApplication.Controllers
 {

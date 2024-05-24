@@ -89,6 +89,7 @@ namespace CoffeeStoreApplication
             builder.Services.AddScoped<IAuthLoginService<EmployeeLoginReturnDTO, EmployeeLoginDTO>, EmployeeAuthService>();
             #endregion
             builder.Services.AddScoped<IEmployeeService, EmployeeService>();
+            builder.Services.AddScoped<ICustomerService, CustomerService>();
 
             builder.Services.AddScoped<ITokenService, TokenService>();
             #endregion

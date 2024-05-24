@@ -3,6 +3,7 @@ using CoffeeStoreApplication.Models;
 using CoffeeStoreApplication.Models.DTOs.Customer;
 using CoffeeStoreApplication.Models.Enum;
 using CoffeeStoreApplication.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -37,7 +38,6 @@ namespace CoffeeStoreApplication.Controllers
                 return BadRequest(new ErrorModel(400, ex.Message));
             }
         }
-
 
         [HttpPost("login")]
         [ProducesResponseType(typeof(CustomerLoginReturnDTO), StatusCodes.Status200OK)]
