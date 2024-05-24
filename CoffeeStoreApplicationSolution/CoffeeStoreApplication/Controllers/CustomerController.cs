@@ -51,5 +51,39 @@ namespace CoffeeStoreApplication.Controllers
                 return NotFound(new ErrorModel(304, ex.Message));
             }
         }
+
+        [Authorize(Roles = "Admin")]
+        [HttpGet("getAll")]
+        [ProducesResponseType(typeof(CustomerDTO), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status404NotFound)]
+        public async Task<ActionResult<CustomerDTO>> GetAll()
+        {
+            try
+            {
+                var result = await _customerService.GetAllCustomers();
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return NotFound(new ErrorModel(404, ex.Message));
+            }
+        }
+
+        [Authorize(Roles = "Admin")]
+        [HttpGet("getById")]
+        [ProducesResponseType(typeof(CustomerDTO), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status404NotFound)]
+        public async Task<ActionResult<CustomerDTO>> GetById(int id)
+        {
+            try
+            {
+                var result = await _customerService.GetCustomerById(id);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return NotFound(new ErrorModel(404, ex.Message));
+            }
+        }
     }
 }
