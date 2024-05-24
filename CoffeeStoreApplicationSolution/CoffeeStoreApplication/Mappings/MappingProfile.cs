@@ -22,6 +22,10 @@ namespace CoffeeStoreApplication.Mappings
             CreateMap<Employee, EmployeeRegisterDTO>().ReverseMap();
             CreateMap<EmployeeRegisterDTO, EmployeeRegisterReturnDTO>().ReverseMap();
             CreateMap<Employee, EmployeeRegisterReturnDTO>().ReverseMap();
+
+            CreateMap<Employee, EmployeeSalaryDTO>().ReverseMap();
+            CreateMap<Employee, EmployeeStatusDTO>().ReverseMap();
+            CreateMap<Employee, EmployeeDTO>().ReverseMap();
             
         }
     }

@@ -70,9 +70,9 @@ namespace CoffeeStoreApplication.Services
                 throw new UnauthorizedUserException($"User not activated");
             }
 
-            HMACSHA256 hMACSHA256 = new HMACSHA256(employee.PasswordHashKey);
-            var encryptedPassword = hMACSHA256.ComputeHash(Encoding.UTF8.GetBytes(loginDTO.Password));
-            bool isCorrectPassword = ComparePassword(encryptedPassword, loginDTO.Password);
+            HMACSHA512 hMACSHA512 = new HMACSHA512(employee.PasswordHashKey);
+            var encryptedPassword = hMACSHA512.ComputeHash(Encoding.UTF8.GetBytes(loginDTO.Password));
+            bool isCorrectPassword = ComparePassword(encryptedPassword, employee.HashedPassword);
 
             if (isCorrectPassword)
             {
@@ -80,7 +80,8 @@ namespace CoffeeStoreApplication.Services
                 {
                     Name = employee.Name,
                     Email = employee.Email,
-                    Token = _tokenService.GenerateEmployeeToken(employee)
+                    Token = _tokenService.GenerateEmployeeToken(employee),
+                    Role = employee.Role.ToString()
                 };
                 return returnDTO;
             }
@@ -88,7 +89,7 @@ namespace CoffeeStoreApplication.Services
             throw new UnauthorizedUserException("Invalid email or password");
         }
 
-        private bool ComparePassword(byte[] encryptedPassword, string password)
+        private bool ComparePassword(byte[] encryptedPassword, byte[] password)
         {
             for (int i = 0; i < encryptedPassword.Length; i++)
             {

@@ -9,7 +9,7 @@ namespace CoffeeStoreApplication.Models.DTOs.Employee
         public string Email { get; set; }
 
         [Required]
-        [MinLength(8)]
+        [MinLength(7)]
         public string Password { get; set; }
     }
 }

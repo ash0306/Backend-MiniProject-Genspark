@@ -29,7 +29,7 @@ namespace CoffeeStoreApplication.Controllers
             try
             {
                 CustomerRegisterReturnDTO returnDTO = await _authRegisterService.Register(registerDTO, RoleType.Customer);
-                return returnDTO;
+                return Ok(returnDTO);
 
             }
             catch (Exception ex)
@@ -47,7 +47,7 @@ namespace CoffeeStoreApplication.Controllers
             try
             {
                 CustomerLoginReturnDTO returnDTO = await _authLoginService.Login(loginDTO);
-                return returnDTO;
+                return Ok(returnDTO);
 
             }
             catch (Exception ex)

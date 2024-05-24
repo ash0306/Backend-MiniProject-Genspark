@@ -29,12 +29,12 @@ namespace CoffeeStoreApplication.Controllers
             try
             {
                 EmployeeRegisterReturnDTO returnDTO = await _authRegisterService.Register(registerDTO, RoleType.Admin);
-                return returnDTO;
+                return Ok(returnDTO);
 
             }
             catch (Exception ex)
             {
-                return BadRequest(new ErrorModel(501, ex.Message));
+                return BadRequest(new ErrorModel(400, ex.Message));
             }
         }
 
@@ -46,12 +46,12 @@ namespace CoffeeStoreApplication.Controllers
             try
             {
                 EmployeeRegisterReturnDTO returnDTO = await _authRegisterService.Register(registerDTO, RoleType.Manager);
-                return returnDTO;
+                return Ok(returnDTO);
 
             }
             catch (Exception ex)
             {
-                return BadRequest(new ErrorModel(501, ex.Message));
+                return BadRequest(new ErrorModel(400, ex.Message));
             }
         }
 
@@ -63,16 +63,16 @@ namespace CoffeeStoreApplication.Controllers
             try
             {
                 EmployeeRegisterReturnDTO returnDTO = await _authRegisterService.Register(registerDTO, RoleType.Barista);
-                return returnDTO;
+                return Ok(returnDTO);
 
             }
             catch (Exception ex)
             {
-                return BadRequest(new ErrorModel(501, ex.Message));
+                return BadRequest(new ErrorModel(400, ex.Message));
             }
         }
 
-        [HttpPost("employee/login")]
+        [HttpPost("login")]
         [ProducesResponseType(typeof(EmployeeLoginReturnDTO), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status400BadRequest)]
         public async Task<ActionResult<EmployeeLoginReturnDTO>> Login(EmployeeLoginDTO loginDTO)
@@ -80,12 +80,12 @@ namespace CoffeeStoreApplication.Controllers
             try
             {
                 EmployeeLoginReturnDTO returnDTO = await _authLoginService.Login(loginDTO);
-                return returnDTO;
+                return Ok(returnDTO);
 
             }
             catch (Exception ex)
             {
-                return BadRequest(new ErrorModel(501, ex.Message));
+                return BadRequest(new ErrorModel(400, ex.Message));
             }
         }
     }
