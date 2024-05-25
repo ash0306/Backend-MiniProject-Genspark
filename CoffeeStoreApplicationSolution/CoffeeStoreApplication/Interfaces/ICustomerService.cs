@@ -7,6 +7,7 @@ namespace CoffeeStoreApplication.Interfaces
     {
         public Task<IEnumerable<CustomerDTO>> GetAllCustomers();
         public Task<CustomerDTO> GetCustomerById(int id);
+        public Task<CustomerDTO> GetCustomerByEmail(string email);
         public Task<LoyaltyPointsDTO> UpdateLoyaltyPoints(LoyaltyPointsDTO loyaltyPoints);
         public Task<UpdatePhoneDTO> UpdatePhone(UpdatePhoneDTO updatePhoneDTO);
     }

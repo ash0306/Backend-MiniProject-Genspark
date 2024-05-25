@@ -37,6 +37,17 @@ namespace CoffeeStoreApplication.Services
             return result;
         }
 
+        public async Task<CustomerDTO> GetCustomerByEmail(string email)
+        {
+            var customer = (await _repository.GetAll()).FirstOrDefault(c => c.Email == email);
+            if(customer == null)
+            {
+                throw new NoSuchCustomerException($"No customer with email {email} found");
+            }
+            CustomerDTO customerDTO = _mapper.Map<CustomerDTO>(customer);
+            return customerDTO;
+        }
+
         public async Task<CustomerDTO> GetCustomerById(int id)
         {
             var customer = await _repository.GetById(id);

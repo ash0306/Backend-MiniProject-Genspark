@@ -90,6 +90,7 @@ namespace CoffeeStoreApplication
             #endregion
             builder.Services.AddScoped<IEmployeeService, EmployeeService>();
             builder.Services.AddScoped<ICustomerService, CustomerService>();
+            builder.Services.AddScoped<IProductService, ProductService>();
 
             builder.Services.AddScoped<ITokenService, TokenService>();
             #endregion

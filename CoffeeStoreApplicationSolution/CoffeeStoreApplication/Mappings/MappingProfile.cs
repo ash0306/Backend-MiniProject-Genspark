@@ -2,6 +2,7 @@
 using CoffeeStoreApplication.Models;
 using CoffeeStoreApplication.Models.DTOs.Customer;
 using CoffeeStoreApplication.Models.DTOs.Employee;
+using CoffeeStoreApplication.Models.DTOs.Product;
 
 namespace CoffeeStoreApplication.Mappings
 {
@@ -9,6 +10,7 @@ namespace CoffeeStoreApplication.Mappings
     {
         public MappingProfile()
         {
+            #region Customer Mappings
             CreateMap<Customer, CustomerLoginDTO>().ReverseMap();
             CreateMap<CustomerLoginDTO, CustomerLoginReturnDTO>().ReverseMap();
             CreateMap<Customer, CustomerLoginReturnDTO>().ReverseMap();
@@ -17,7 +19,9 @@ namespace CoffeeStoreApplication.Mappings
             CreateMap<Customer, CustomerRegisterReturnDTO>().ReverseMap();
 
             CreateMap<Customer, CustomerDTO>().ReverseMap();
-            
+            #endregion
+
+            #region Employee Mappings
             CreateMap<Employee, EmployeeLoginDTO>().ReverseMap();
             CreateMap<EmployeeLoginDTO, EmployeeLoginReturnDTO>().ReverseMap();
             CreateMap<Employee, EmployeeLoginReturnDTO>().ReverseMap();
@@ -28,7 +32,14 @@ namespace CoffeeStoreApplication.Mappings
             CreateMap<Employee, EmployeeSalaryDTO>().ReverseMap();
             CreateMap<Employee, EmployeeStatusDTO>().ReverseMap();
             CreateMap<Employee, EmployeeDTO>().ReverseMap();
-            
+            #endregion
+
+            #region Product Mappings
+            CreateMap<Product, ProductDTO>().ReverseMap();
+            CreateMap<Product, ProductPriceDTO>().ReverseMap();
+            CreateMap<Product, ProductStatusDTO>().ReverseMap();
+            CreateMap<Product, ProductStockDTO>().ReverseMap();
+            #endregion
         }
     }
 }

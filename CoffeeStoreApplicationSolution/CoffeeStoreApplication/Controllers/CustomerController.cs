@@ -85,5 +85,22 @@ namespace CoffeeStoreApplication.Controllers
                 return NotFound(new ErrorModel(404, ex.Message));
             }
         }
+
+        [Authorize(Roles = "Admin")]
+        [HttpGet("getByEmail")]
+        [ProducesResponseType(typeof(CustomerDTO), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status404NotFound)]
+        public async Task<ActionResult<CustomerDTO>> GetByEmail(string email)
+        {
+            try
+            {
+                var result = await _customerService.GetCustomerByEmail(email);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return NotFound(new ErrorModel(404, ex.Message));
+            }
+        }
     }
 }
