@@ -1,6 +1,7 @@
 ﻿using CoffeeStoreApplication.Interfaces;
 using CoffeeStoreApplication.Models;
 using CoffeeStoreApplication.Models.DTOs.Product;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -16,7 +17,8 @@ namespace CoffeeStoreApplication.Controllers
         {
             _productService = productService;
         }
-
+        
+        [Authorize(Roles = "Manager,Barista")]
         [HttpPost("addProduct")]
         [ProducesResponseType(typeof(ProductDTO),StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorModel),StatusCodes.Status400BadRequest)]
@@ -33,7 +35,7 @@ namespace CoffeeStoreApplication.Controllers
             }
         }
 
-
+        [Authorize(Roles = "Manager,Barista")]
         [HttpGet("getAllProducts")]
         [ProducesResponseType(typeof(IEnumerable<ProductDTO>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status404NotFound)]
@@ -49,6 +51,8 @@ namespace CoffeeStoreApplication.Controllers
                 return NotFound(new ErrorModel(404, ex.Message));
             }
         }
+
+        [Authorize(Roles = "Manager,Barista")]
         [HttpGet("getAvailableProducts")]
         [ProducesResponseType(typeof(IEnumerable<ProductDTO>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status404NotFound)]
@@ -65,6 +69,7 @@ namespace CoffeeStoreApplication.Controllers
             }
         }
 
+        [Authorize(Roles = "Manager,Barista")]
         [HttpGet("getById")]
         [ProducesResponseType(typeof(ProductDTO), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status404NotFound)]
@@ -81,6 +86,7 @@ namespace CoffeeStoreApplication.Controllers
             }
         }
 
+        [Authorize(Roles = "Manager,Barista")]
         [HttpGet("getByCategory")]
         [ProducesResponseType(typeof(IEnumerable<ProductDTO>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status404NotFound)]
@@ -97,6 +103,7 @@ namespace CoffeeStoreApplication.Controllers
             }
         }
 
+        [Authorize(Roles = "Manager")]
         [HttpPut("updatePrice")]
         [ProducesResponseType(typeof(ProductPriceDTO), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status409Conflict)]
@@ -113,6 +120,7 @@ namespace CoffeeStoreApplication.Controllers
             }
         }
 
+        [Authorize(Roles = "Manager,Barista")]
         [HttpPut("updateStatus")]
         [ProducesResponseType(typeof(ProductStatusDTO), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status409Conflict)]
@@ -129,6 +137,7 @@ namespace CoffeeStoreApplication.Controllers
             }
         }
 
+        [Authorize(Roles = "Manager,Barista")]
         [HttpPut("updateStock")]
         [ProducesResponseType(typeof(ProductStockDTO), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status409Conflict)]
