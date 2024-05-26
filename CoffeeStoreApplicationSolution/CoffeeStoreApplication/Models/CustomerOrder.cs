@@ -8,8 +8,8 @@ namespace CoffeeStoreApplication.Models
         public int CustomerId { get; set; }
         public int OrderId { get; set; }
         [ForeignKey("CustomerId")]
-        public Customer customer { get; set; }
+        public Customer Customer { get; set; }
         [ForeignKey("OrderId")]
-        public Order order { get; set; }
+        public Order Order { get; set; }
     }
 }

@@ -38,7 +38,7 @@ namespace CoffeeStoreApplication.Controllers
 
         [Authorize(Roles = "Admin")]
         [HttpGet("getById")]
-        [ProducesResponseType(typeof(IEnumerable<EmployeeDTO>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(EmployeeDTO), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status404NotFound)]
         public async Task<ActionResult<EmployeeDTO>> GetById(int id)
         {

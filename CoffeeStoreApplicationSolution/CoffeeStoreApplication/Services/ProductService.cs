@@ -21,6 +21,7 @@ namespace CoffeeStoreApplication.Services
         public async Task<ProductDTO> AddProduct(ProductDTO productDTO)
         {
             Product product = _mapper.Map<Product>(productDTO);
+            product.Category = (ProductCategory)Enum.Parse(typeof(ProductCategory), productDTO.Category);
             product.Status = (ProductStatus)Enum.Parse(typeof(ProductStatus), productDTO.Status);
 
             var newProduct = await _repository.Add(product);
@@ -77,7 +78,7 @@ namespace CoffeeStoreApplication.Services
 
         public async Task<IEnumerable<ProductDTO>> GetProductsByCategory(string category)
         {
-            IList<Product> products = (await _repository.GetAll()).Where(p => p.Category == category).ToList();
+            IList<Product> products = (await _repository.GetAll()).Where(p => p.Category.ToString() == category).ToList();
 
             if (products.Count == 0)
                 throw new NoProductsFoundException($"No products found");

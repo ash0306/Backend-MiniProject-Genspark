@@ -81,7 +81,7 @@ namespace CoffeeStoreApplication
             #endregion
 
             #region Services
-            #region AuthServices
+            #region Authentication Services
             builder.Services.AddScoped<IAuthRegisterService<CustomerRegisterReturnDTO, CustomerRegisterDTO>, CustomerAuthService>();
             builder.Services.AddScoped<IAuthLoginService<CustomerLoginReturnDTO, CustomerLoginDTO>, CustomerAuthService>();
 
@@ -91,6 +91,10 @@ namespace CoffeeStoreApplication
             builder.Services.AddScoped<IEmployeeService, EmployeeService>();
             builder.Services.AddScoped<ICustomerService, CustomerService>();
             builder.Services.AddScoped<IProductService, ProductService>();
+            builder.Services.AddScoped<IOrderService, OrderService>();
+            builder.Services.AddScoped<IOrderItemService, OrderItemService>();
+            builder.Services.AddScoped<ICustomerOrderService, CustomerOrderService>();
+
 
             builder.Services.AddScoped<ITokenService, TokenService>();
             #endregion
@@ -105,6 +109,7 @@ namespace CoffeeStoreApplication
                 app.UseSwagger();
                 app.UseSwaggerUI();
             }
+
             app.UseAuthentication();
             app.UseAuthorization();
 

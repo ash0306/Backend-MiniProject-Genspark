@@ -75,7 +75,7 @@ namespace CoffeeStoreApplication.Contexts
                     Id = 301,
                     Name = "Espresso",
                     Description = "A strong, full-bodied coffee made with finely ground coffee beans and brewed under high pressure. Perfect for a quick energy boost.",
-                    Category = "Hot Drinks",
+                    Category = ProductCategory.HotDrinks,
                     Price = 100,
                     Stock = 50,
                     Status = ProductStatus.Available
@@ -85,7 +85,7 @@ namespace CoffeeStoreApplication.Contexts
                     Id = 302,
                     Name = "Cappuccino",
                     Description = "A classic Italian coffee drink made with equal parts espresso, steamed milk, and foamed milk. Smooth and creamy with a rich flavor.",
-                    Category = "Hot Drinks",
+                    Category = ProductCategory.HotDrinks,
                     Price = 130,
                     Stock = 50,
                     Status = ProductStatus.Available
@@ -95,7 +95,7 @@ namespace CoffeeStoreApplication.Contexts
                     Id = 303,
                     Name = "Iced Americano",
                     Description = "A refreshing iced coffee made by combining rich espresso with cold water and ice. A perfect drink for coffee lovers to enjoy on a hot day.",
-                    Category = "Cold Drinks",
+                    Category = ProductCategory.ColdDrinks,
                     Price = 110,
                     Stock = 50,
                     Status = ProductStatus.Available
@@ -105,7 +105,7 @@ namespace CoffeeStoreApplication.Contexts
                     Id = 304,
                     Name = "Veg Sandwich",
                     Description = "A delicious sandwich filled with fresh vegetables, cheese, and a hint of seasoning. Ideal for a quick and healthy snack.",
-                    Category = "Snacks",
+                    Category = ProductCategory.Snacks,
                     Price = 120,
                     Stock = 50,
                     Status = ProductStatus.Available
@@ -117,6 +117,18 @@ namespace CoffeeStoreApplication.Contexts
                 .HasMany(o => o.OrderItems)
                 .WithOne(oi => oi.Order)
                 .HasForeignKey(oi => oi.OrderId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<CustomerOrder>()
+                .HasOne(co => co.Customer)
+                .WithMany(c => c.CustomerOrders)
+                .HasForeignKey(co => co.CustomerId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<CustomerOrder>()
+                .HasOne(co => co.Order)
+                .WithOne(o => o.CustomerOrder)
+                .HasForeignKey<CustomerOrder>(co => co.OrderId)
                 .OnDelete(DeleteBehavior.Restrict);
         }
     }

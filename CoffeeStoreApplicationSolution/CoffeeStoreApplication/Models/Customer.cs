@@ -13,6 +13,6 @@ namespace CoffeeStoreApplication.Models
         public byte[] PasswordHashKey { get; set; }
         public DateTime DateOfBirth { get; set; }
         public int LoyaltyPoints { get; set; } = 0;
-
+        public ICollection<CustomerOrder> CustomerOrders { get; set; }
     }
 }

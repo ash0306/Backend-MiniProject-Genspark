@@ -1,7 +1,10 @@
 ﻿using AutoMapper;
 using CoffeeStoreApplication.Models;
 using CoffeeStoreApplication.Models.DTOs.Customer;
+using CoffeeStoreApplication.Models.DTOs.CustomerOrder;
 using CoffeeStoreApplication.Models.DTOs.Employee;
+using CoffeeStoreApplication.Models.DTOs.Order;
+using CoffeeStoreApplication.Models.DTOs.OrderItems;
 using CoffeeStoreApplication.Models.DTOs.Product;
 
 namespace CoffeeStoreApplication.Mappings
@@ -39,6 +42,22 @@ namespace CoffeeStoreApplication.Mappings
             CreateMap<Product, ProductPriceDTO>().ReverseMap();
             CreateMap<Product, ProductStatusDTO>().ReverseMap();
             CreateMap<Product, ProductStockDTO>().ReverseMap();
+            #endregion
+
+            #region Order Mappings
+            CreateMap<Order, OrderDTO>().ReverseMap();
+            CreateMap<OrderDTO, OrderReturnDTO>().ReverseMap();
+            CreateMap<Order, OrderReturnDTO>().ReverseMap();
+            CreateMap<Order, OrderStatusDTO>().ReverseMap();
+            #endregion
+
+            #region CustomerOrder Mappings
+            CreateMap<CustomerOrder, CustomerOrderDTO>().ReverseMap();
+            CreateMap<CustomerOrder, CustomerOrderReturnDTO>().ReverseMap();
+            #endregion
+
+            #region OrderItem Mappings
+            CreateMap<OrderItem, OrderItemDTO>().ReverseMap();
             #endregion
         }
     }
