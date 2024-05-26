@@ -15,7 +15,7 @@ namespace CoffeeStoreApplication.Models.DTOs.Order
 
         [Required]
         [EnumValidation(typeof(OrderStatus))]
-        public OrderStatus Status { get; set; }
+        public string Status { get; set; }
 
         [Required]
         public float TotalPrice { get; set; }

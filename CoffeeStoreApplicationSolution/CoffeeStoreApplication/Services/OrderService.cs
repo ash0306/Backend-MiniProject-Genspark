@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using CoffeeStoreApplication.Exceptions;
 using CoffeeStoreApplication.Exceptions.OrderExceptions;
+using CoffeeStoreApplication.Exceptions.OrderItemExceptions;
 using CoffeeStoreApplication.Exceptions.ProductExceptions;
 using CoffeeStoreApplication.Interfaces;
 using CoffeeStoreApplication.Models;
@@ -38,26 +39,16 @@ namespace CoffeeStoreApplication.Services
             Order order;
             float totalPrice = 0;
             float loyaltyDiscount = 0;
+            IList<OrderItem> orderItems = new List<OrderItem>();
 
             if(orderDTO.OrderItems.Count() == 0)
-            {
                 throw new NoItemsFoundException("This order has no items!! Add atleast 1 item to place an order.");
-            }
 
-            foreach (var item in orderDTO.OrderItems)
-            {
-                var product = (await _productRepository.GetAll()).FirstOrDefault(p => p.Name == item.ProductName);
-                if (product == null)
-                    throw new NoSuchProductException("No product with the given name found");
-                totalPrice += product.Price;
-            }
+            totalPrice = await CalculateTotalPrice(orderDTO);
 
             if(orderDTO.UseLoyaltyPoints)
             {
-                var customer = (await _customerRepository.GetAll()).FirstOrDefault(c=>c.Id == orderDTO.CustomerId);
-                if (customer.LoyaltyPoints < 100)
-                    throw new InsufficientPointsException("You have less than 100 points. Need minimum 100 points to deduct discount");
-                loyaltyDiscount = customer.LoyaltyPoints;
+                loyaltyDiscount = await CalculateLoyaltyDiscount(orderDTO, totalPrice);
                 totalPrice -= loyaltyDiscount;
             }
             else
@@ -77,19 +68,10 @@ namespace CoffeeStoreApplication.Services
             };
 
             var result = await _orderRepository.Add(order);
-            orderDTO = _mapper.Map<OrderDTO>(result);
 
-            foreach (var item in orderDTO.OrderItems)
-            {
-                var product = (await _productRepository.GetAll()).FirstOrDefault(p => p.Name == item.ProductName);
-                OrderItem orderItem = new OrderItem()
-                {
-                    OrderId = result.Id,
-                    ProductId = product.Id
-                };
-
-                var itemOrder = await _orderItemRepository.Add(orderItem);
-            }
+            orderItems = (await AddOrderItems(orderDTO, result.Id)).ToList();
+            order.OrderItems = orderItems;
+            result = await _orderRepository.Update(order);
 
             CustomerOrder customerOrder = new CustomerOrder()
             {
@@ -98,8 +80,70 @@ namespace CoffeeStoreApplication.Services
             };
             await _customerOrderRepository.Add(customerOrder);
 
-            OrderReturnDTO orderReturnDTO = _mapper.Map<OrderReturnDTO>(orderDTO);
+            OrderReturnDTO orderReturnDTO = _mapper.Map<OrderReturnDTO>(result);
             return orderReturnDTO;
+        }
+
+        public async Task<float> CalculateTotalPrice(OrderDTO orderDTO)
+        {
+            float totalPrice = 0;   
+            foreach (var item in orderDTO.OrderItems)
+            {
+                var product = (await _productRepository.GetAll()).FirstOrDefault(p => p.Name == item.ProductName);
+                if (product == null)
+                    throw new NoSuchProductException("No product with the given name found");
+                if (product.Stock < 1)
+                    throw new ProductOutOfStockException("The product isnt available");
+                totalPrice += product.Price;
+            }
+            return totalPrice;
+        }
+        public async Task<float> CalculateLoyaltyDiscount(OrderDTO orderDTO, float totalPrice)
+        {
+            float loyaltyDiscount = 0;
+            var customer = (await _customerRepository.GetAll()).FirstOrDefault(c => c.Id == orderDTO.CustomerId);
+            if (customer.LoyaltyPoints < 100)
+                throw new InsufficientPointsException("You have less than 100 points. Need minimum 100 points to deduct discount");
+
+            if(customer.LoyaltyPoints > totalPrice)
+            {
+                loyaltyDiscount = totalPrice;
+                return loyaltyDiscount;
+            }
+            loyaltyDiscount = customer.LoyaltyPoints;
+
+            return loyaltyDiscount;
+        }
+        public async Task<IEnumerable<OrderItem>> AddOrderItems(OrderDTO orderDTO, int orderId)
+        {
+            IList<OrderItem> orderItems = new List<OrderItem>();
+
+            foreach (var item in orderDTO.OrderItems)
+            {
+                var product = (await _productRepository.GetAll()).FirstOrDefault(p => p.Name == item.ProductName);
+
+                OrderItem orderItem = new OrderItem()
+                {
+                    OrderId = orderId,
+                    ProductId = product.Id
+                };
+
+                orderItems.Add(orderItem);
+
+                product.Stock -= 1;
+                var updatedProduct = await _productRepository.Update(product);
+                if(updatedProduct == null)
+                {
+                    throw new UnableToUpdateProductException("Could not update product stock at the moment");
+                }
+
+                var itemOrder = await _orderItemRepository.Add(orderItem);
+                if (itemOrder == null)
+                {
+                    throw new UnableToAddOrderItemException("Unable to add order item");
+                }
+            }
+            return orderItems;
         }
 
         public async Task<OrderReturnDTO> CancelOrder(int orderId)
@@ -110,20 +154,31 @@ namespace CoffeeStoreApplication.Services
                 throw new NoSuchOrderException($"No order found with ID {orderId}");
             }
 
+            if (order.Status == OrderStatus.Cancelled)
+                throw new NoSuchOrderException("Your order has already been cancelled");
+
             if(order.Status != OrderStatus.Placed)
             {
                 throw new UnableToCancelOrderException("Your order is already being prepared so cannot cancel order");
             }
-
+            var items = (await _orderItemRepository.GetAll()).Where(oi => oi.OrderId == order.Id);
+            
+            foreach(var item in items)
+            {
+                var product = await _productRepository.GetById(item.ProductId);
+                product.Stock += 1;
+                await _productRepository.Update(product);
+            }
             order.Status = OrderStatus.Cancelled;
             var result = await _orderRepository.Update(order);
             OrderReturnDTO orderReturnDTO = _mapper.Map<OrderReturnDTO>(result);
+
             return orderReturnDTO;
         }
 
         public async Task<IEnumerable<OrderReturnDTO>> GetAllPendingOrders()
         {
-            var orders = (await _orderRepository.GetAll()).Where(o=> o.Status != OrderStatus.Completed || o.Status != OrderStatus.Cancelled);
+            var orders = (await _orderRepository.GetAll()).Where(o=> o.Status != OrderStatus.Completed && o.Status != OrderStatus.Cancelled);
 
             if(orders.Count() == 0)
                 throw new NoSuchOrderException("No pending orders found.");
@@ -149,7 +204,6 @@ namespace CoffeeStoreApplication.Services
             if (updatedOrder == null)
                 throw new UnableToUpdateOrderException("Unable to update the order status at this moment");
             
-            orderStatusDTO = _mapper.Map<OrderStatusDTO>(updatedOrder);
             return orderStatusDTO;
         }
     }

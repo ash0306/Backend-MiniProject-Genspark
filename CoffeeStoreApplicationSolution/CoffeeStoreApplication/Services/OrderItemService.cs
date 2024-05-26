@@ -10,11 +10,13 @@ namespace CoffeeStoreApplication.Services
     {
         private readonly IRepository<int, OrderItem> _repository;
         private readonly IMapper _mapper;
+        private readonly IRepository<int, Product> _productRepository;
 
-        public OrderItemService(IRepository<int, OrderItem> repository, IMapper mapper)
+        public OrderItemService(IRepository<int, OrderItem> repository, IMapper mapper, IRepository<int, Product> productRepository)
         {
             _repository = repository;
             _mapper = mapper;
+            _productRepository = productRepository;
         }
 
         public async Task<IEnumerable<OrderItemDTO>> GetOrderItemsByOrderId(int orderId)
@@ -28,7 +30,12 @@ namespace CoffeeStoreApplication.Services
 
             foreach (var item in items)
             {
-                orderItemDTO.Add(_mapper.Map<OrderItemDTO>(item));
+                var prod = await _productRepository.GetById(item.ProductId);
+                OrderItemDTO tempDTO = new OrderItemDTO()
+                {
+                    ProductName = prod.Name
+                };
+                orderItemDTO.Add(tempDTO);
             }
 
             return orderItemDTO;

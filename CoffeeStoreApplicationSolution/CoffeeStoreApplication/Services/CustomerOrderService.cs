@@ -52,7 +52,7 @@ namespace CoffeeStoreApplication.Services
                     TotalOrderPrice = order.TotalPrice,
                     OrderItems = orderItems
                 };
-                customerOrders.Add(_mapper.Map<CustomerOrderReturnDTO>(item));
+                customerOrders.Add(returnDTO);
             }
             return customerOrders;
         }

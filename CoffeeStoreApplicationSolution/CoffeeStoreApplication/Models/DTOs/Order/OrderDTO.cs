@@ -12,13 +12,6 @@ namespace CoffeeStoreApplication.Models.DTOs.Order
         public int CustomerId { get; set; }
 
         [Required]
-        [EnumValidation(typeof(OrderStatus))]
-        public OrderStatus Status { get; set; }
-
-        [Required]
-        public float TotalPrice { get; set; }
-
-        [Required]
         public bool UseLoyaltyPoints { get; set; }
 
         [Required]
