@@ -15,11 +15,13 @@ namespace CoffeeStoreApplication.Controllers
     {
         private readonly IAuthLoginService<CustomerLoginReturnDTO, CustomerLoginDTO> _authLoginService;
         private readonly IAuthRegisterService<CustomerRegisterReturnDTO, CustomerRegisterDTO> _authRegisterService;
+        private readonly ILogger<CustomerAuthController> _logger;
 
-        public CustomerAuthController(IAuthLoginService<CustomerLoginReturnDTO, CustomerLoginDTO> authLoginService, IAuthRegisterService<CustomerRegisterReturnDTO, CustomerRegisterDTO> authRegisterService)
+        public CustomerAuthController(IAuthLoginService<CustomerLoginReturnDTO, CustomerLoginDTO> authLoginService, IAuthRegisterService<CustomerRegisterReturnDTO, CustomerRegisterDTO> authRegisterService, ILogger<CustomerAuthController> logger)
         {
             _authLoginService = authLoginService;
             _authRegisterService = authRegisterService;
+            _logger = logger;
         }
 
         [HttpPost("register")]
@@ -35,6 +37,7 @@ namespace CoffeeStoreApplication.Controllers
             }
             catch (Exception ex)
             {
+                _logger.LogCritical(ex.Message, ex);
                 return BadRequest(new ErrorModel(400, ex.Message));
             }
         }
@@ -52,6 +55,7 @@ namespace CoffeeStoreApplication.Controllers
             }
             catch (Exception ex)
             {
+                _logger.LogCritical(ex.Message, ex);
                 return BadRequest(new ErrorModel(400, ex.Message));
             }
         }

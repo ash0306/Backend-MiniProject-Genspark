@@ -19,6 +19,11 @@ namespace CoffeeStoreApplication.Services
             _mapper = mapper;
         }
 
+        /// <summary>
+        /// Gets a list of all the customers
+        /// </summary>
+        /// <returns>List of all customers</returns>
+        /// <exception cref="NoCustomersFoundException">If no customers are found</exception>
         public async Task<IEnumerable<CustomerDTO>> GetAllCustomers()
         {
             var customers = await _repository.GetAll();
@@ -37,6 +42,12 @@ namespace CoffeeStoreApplication.Services
             return result;
         }
 
+        /// <summary>
+        /// Get Customer details usng Email
+        /// </summary>
+        /// <param name="email">Email of the customer to be found</param>
+        /// <returns></returns>
+        /// <exception cref="NoSuchCustomerException"></exception>
         public async Task<CustomerDTO> GetCustomerByEmail(string email)
         {
             var customer = (await _repository.GetAll()).FirstOrDefault(c => c.Email == email);
@@ -48,6 +59,12 @@ namespace CoffeeStoreApplication.Services
             return customerDTO;
         }
 
+        /// <summary>
+        /// Get Customer details using ID.
+        /// </summary>
+        /// <param name="id">ID of the customer to be found</param>
+        /// <returns>CustomerDTO object containing customer details</returns>
+        /// <exception cref="NoSuchCustomerException">If no customer with the specified ID exists</exception>
         public async Task<CustomerDTO> GetCustomerById(int id)
         {
             var customer = await _repository.GetById(id);
@@ -61,6 +78,12 @@ namespace CoffeeStoreApplication.Services
             return customerDTO;
         }
 
+        /// <summary>
+        /// Update the loyalty points of a customer.
+        /// </summary>
+        /// <param name="loyaltyPoints">LoyaltyPointsDTO object containing customer ID and new loyalty points</param>
+        /// <returns>Updated LoyaltyPointsDTO object</returns>
+        /// <exception cref="NoSuchCustomerException">If no customer with the specified ID exists</exception>
         public async Task<LoyaltyPointsDTO> UpdateLoyaltyPoints(LoyaltyPointsDTO loyaltyPoints)
         {
             Customer customer = await _repository.GetById(loyaltyPoints.CustomerId);
@@ -81,6 +104,12 @@ namespace CoffeeStoreApplication.Services
             return loyaltyPoints;
         }
 
+        /// <summary>
+        /// Update the phone number of a customer.
+        /// </summary>
+        /// <param name="updatePhoneDTO">UpdatePhoneDTO object containing customer ID and new phone number</param>
+        /// <returns>Updated UpdatePhoneDTO object</returns>
+        /// <exception cref="NoSuchCustomerException">If no customer with the specified ID exists</exception>
         public async Task<UpdatePhoneDTO> UpdatePhone(UpdatePhoneDTO updatePhoneDTO)
         {
             Customer customer = await _repository.GetById(updatePhoneDTO.CustomerId);

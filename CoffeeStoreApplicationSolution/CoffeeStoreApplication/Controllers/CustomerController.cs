@@ -12,10 +12,12 @@ namespace CoffeeStoreApplication.Controllers
     public class CustomerController : ControllerBase
     {
         private readonly ICustomerService _customerService;
+        private readonly ILogger<CustomerController> _logger;
 
-        public CustomerController(ICustomerService customerService)
+        public CustomerController(ICustomerService customerService, ILogger<CustomerController> logger)
         {
             _customerService = customerService;
+            _logger = logger;
         }
 
         [Authorize(Roles = "Barista")]
@@ -31,6 +33,7 @@ namespace CoffeeStoreApplication.Controllers
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex.Message, ex);
                 return NotFound(new ErrorModel(304, ex.Message));
             }
         }
@@ -48,6 +51,7 @@ namespace CoffeeStoreApplication.Controllers
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex.Message, ex);
                 return NotFound(new ErrorModel(304, ex.Message));
             }
         }
@@ -65,6 +69,7 @@ namespace CoffeeStoreApplication.Controllers
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex.Message, ex);
                 return NotFound(new ErrorModel(404, ex.Message));
             }
         }
@@ -82,6 +87,7 @@ namespace CoffeeStoreApplication.Controllers
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex.Message, ex);
                 return NotFound(new ErrorModel(404, ex.Message));
             }
         }
@@ -99,6 +105,7 @@ namespace CoffeeStoreApplication.Controllers
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex.Message, ex);
                 return NotFound(new ErrorModel(404, ex.Message));
             }
         }

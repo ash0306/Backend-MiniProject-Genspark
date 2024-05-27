@@ -21,6 +21,15 @@ namespace CoffeeStoreApplication.Services
             _tokenService = tokenService;
             _mapper = mapper;
         }
+
+        /// <summary>
+        /// Registers a new employee.
+        /// </summary>
+        /// <param name="registerDTO">EmployeeRegisterDTO object containing registration details</param>
+        /// <param name="role">RoleType of the employee</param>
+        /// <returns>EmployeeRegisterReturnDTO object containing registered employee details</returns>
+        /// <exception cref="UserAlreadyExistsException">If the user with the given email already exists</exception>
+        /// <exception cref="UnableToRegisterException">If unable to register the employee</exception>
         public async Task<EmployeeRegisterReturnDTO> Register(EmployeeRegisterDTO registerDTO, RoleType role)
         {
             Employee employee;
@@ -57,6 +66,12 @@ namespace CoffeeStoreApplication.Services
             }
         }
 
+        /// <summary>
+        /// Logs in an employee.
+        /// </summary>
+        /// <param name="loginDTO">EmployeeLoginDTO object containing login details</param>
+        /// <returns>EmployeeLoginReturnDTO object containing employee details and token</returns>
+        /// <exception cref="UnauthorizedUserException">If the login details are incorrect or the user is not activated</exception>
         public async Task<EmployeeLoginReturnDTO> Login(EmployeeLoginDTO loginDTO)
         {
             Employee employee = (await _repository.GetAll()).FirstOrDefault(c => c.Email == loginDTO.Email);
@@ -89,6 +104,12 @@ namespace CoffeeStoreApplication.Services
             throw new UnauthorizedUserException("Invalid email or password");
         }
 
+        /// <summary>
+        /// Compares two password hashes.
+        /// </summary>
+        /// <param name="encryptedPassword">Byte array of the encrypted password</param>
+        /// <param name="password">Byte array of the stored password</param>
+        /// <returns>True if passwords match, otherwise false</returns>
         private bool ComparePassword(byte[] encryptedPassword, byte[] password)
         {
             for (int i = 0; i < encryptedPassword.Length; i++)

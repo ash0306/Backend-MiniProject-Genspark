@@ -27,6 +27,12 @@ namespace CoffeeStoreApplication.Services
             _orderItemService = orderItemService;
         }
 
+        /// <summary>
+        /// Gets all the Orders and their details for a given customer
+        /// </summary>
+        /// <param name="customerId">ID of the customer whose Orders are to be fetched</param>
+        /// <returns>List of customer orders</returns>
+        /// <exception cref="NoOrdersFoundException">Thrown if no orders were found for a given user</exception>
         public async Task<IEnumerable<CustomerOrderReturnDTO>> GetCustomerOrderById(int customerId)
         {
             IList<CustomerOrderReturnDTO> customerOrders = new List<CustomerOrderReturnDTO>();

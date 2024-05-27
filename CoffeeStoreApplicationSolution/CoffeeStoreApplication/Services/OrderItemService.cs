@@ -19,6 +19,12 @@ namespace CoffeeStoreApplication.Services
             _productRepository = productRepository;
         }
 
+        /// <summary>
+        /// Gets the order items by order ID.
+        /// </summary>
+        /// <param name="orderId">ID of the order</param>
+        /// <returns>List of OrderItemDTO objects containing order item details</returns>
+        /// <exception cref="NoItemsFoundException">If no items are found for the specified order ID</exception>
         public async Task<IEnumerable<OrderItemDTO>> GetOrderItemsByOrderId(int orderId)
         {
             var items = (await  _repository.GetAll()).Where(oi=>oi.OrderId == orderId).ToList();

@@ -18,6 +18,11 @@ namespace CoffeeStoreApplication.Services
             _mapper = mapper;
         }
 
+        /// <summary>
+        /// Gets a list of all employees.
+        /// </summary>
+        /// <returns>List of all employees</returns>
+        /// <exception cref="NoEmployeesFoundException">If no employees are found</exception>
         public async Task<IEnumerable<EmployeeDTO>> GetAllEmployees()
         {
             var employees = await _repository.GetAll();
@@ -36,6 +41,12 @@ namespace CoffeeStoreApplication.Services
             return result;
         }
 
+        /// <summary>
+        /// Gets the details of an employee by their ID.
+        /// </summary>
+        /// <param name="id">ID of the employee to be found</param>
+        /// <returns>EmployeeDTO object containing employee details</returns>
+        /// <exception cref="NoSuchEmployeeException">If no employee with the specified ID exists</exception>
         public async Task<EmployeeDTO> GetEmployeeById(int id)
         {
             var employee = await _repository.GetById(id);
@@ -49,6 +60,12 @@ namespace CoffeeStoreApplication.Services
             return employeeDTO;
         }
 
+        /// <summary>
+        /// Updates the salary of an employee.
+        /// </summary>
+        /// <param name="employeeSalaryDTO">EmployeeSalaryDTO object containing employee ID and new salary</param>
+        /// <returns>Updated EmployeeSalaryDTO object</returns>
+        /// <exception cref="NoSuchEmployeeException">If no employee with the specified ID exists</exception>
         public async Task<EmployeeSalaryDTO> UpdateSalary(EmployeeSalaryDTO employeeSalaryDTO)
         {
             Employee employee = await _repository.GetById(employeeSalaryDTO.EmployeeId);
@@ -69,6 +86,12 @@ namespace CoffeeStoreApplication.Services
             return employeeSalaryDTO;
         }
 
+        /// <summary>
+        /// Activates an employee.
+        /// </summary>
+        /// <param name="id">ID of the employee to be activated</param>
+        /// <returns>EmployeeStatusDTO object containing the updated status</returns>
+        /// <exception cref="NoSuchEmployeeException">If no employee with the specified ID exists</exception>
         public async Task<EmployeeStatusDTO> ActivateEmployee(int id)
         {
             Employee employee = await _repository.GetById(id);
@@ -89,6 +112,12 @@ namespace CoffeeStoreApplication.Services
             return employeeStatusDTO;
         }
 
+        /// <summary>
+        /// Deactivates an employee.
+        /// </summary>
+        /// <param name="id">ID of the employee to be deactivated</param>
+        /// <returns>EmployeeStatusDTO object containing the updated status</returns>
+        /// <exception cref="NoSuchEmployeeException">If no employee with the specified ID exists</exception>
         public async Task<EmployeeStatusDTO> DeactivateEmployee(int id)
         {
             Employee employee = await _repository.GetById(id);

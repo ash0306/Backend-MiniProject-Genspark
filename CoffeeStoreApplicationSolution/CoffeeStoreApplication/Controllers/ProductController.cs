@@ -12,10 +12,12 @@ namespace CoffeeStoreApplication.Controllers
     public class ProductController : ControllerBase
     {
         private readonly IProductService _productService;
+        private readonly ILogger<ProductController> _logger;
 
-        public ProductController(IProductService productService)
+        public ProductController(IProductService productService, ILogger<ProductController> logger)
         {
             _productService = productService;
+            _logger = logger;
         }
         
         [Authorize(Roles = "Manager,Barista")]
@@ -31,6 +33,7 @@ namespace CoffeeStoreApplication.Controllers
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex.Message, ex);
                 return BadRequest(new ErrorModel(400, ex.Message));
             }
         }
@@ -48,6 +51,7 @@ namespace CoffeeStoreApplication.Controllers
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex.Message, ex);
                 return NotFound(new ErrorModel(404, ex.Message));
             }
         }
@@ -65,6 +69,7 @@ namespace CoffeeStoreApplication.Controllers
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex.Message, ex);
                 return NotFound(new ErrorModel(404, ex.Message));
             }
         }
@@ -82,6 +87,7 @@ namespace CoffeeStoreApplication.Controllers
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex.Message, ex);
                 return NotFound(new ErrorModel(404, ex.Message));
             }
         }
@@ -99,6 +105,7 @@ namespace CoffeeStoreApplication.Controllers
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex.Message, ex);
                 return NotFound(new ErrorModel(404, ex.Message));
             }
         }
@@ -116,6 +123,7 @@ namespace CoffeeStoreApplication.Controllers
             }
             catch(Exception ex)
             {
+                _logger.LogError(ex.Message, ex);
                 return Conflict(new ErrorModel(409, ex.Message));
             }
         }
@@ -133,6 +141,7 @@ namespace CoffeeStoreApplication.Controllers
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex.Message, ex);
                 return Conflict(new ErrorModel(409, ex.Message));
             }
         }
@@ -150,6 +159,7 @@ namespace CoffeeStoreApplication.Controllers
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex.Message, ex);
                 return Conflict(new ErrorModel(409, ex.Message));
             }
         }

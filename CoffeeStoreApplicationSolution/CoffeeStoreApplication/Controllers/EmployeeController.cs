@@ -13,10 +13,12 @@ namespace CoffeeStoreApplication.Controllers
     public class EmployeeController : ControllerBase
     {
         private readonly IEmployeeService _employeeService;
+        private readonly ILogger<EmployeeController> _logger;
 
-        public EmployeeController(IEmployeeService employeeService)
+        public EmployeeController(IEmployeeService employeeService, ILogger<EmployeeController> logger)
         {
             _employeeService = employeeService;
+            _logger = logger;
         }
 
         [Authorize(Roles = "Admin")]
@@ -32,6 +34,7 @@ namespace CoffeeStoreApplication.Controllers
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex.Message, ex);
                 return NotFound(new ErrorModel(404, ex.Message));
             }
         }
@@ -49,6 +52,7 @@ namespace CoffeeStoreApplication.Controllers
             }
             catch(Exception ex)
             {
+                _logger.LogError(ex.Message, ex);
                 return NotFound(new ErrorModel(404, ex.Message));
             }
         }
@@ -66,6 +70,7 @@ namespace CoffeeStoreApplication.Controllers
             }
             catch(Exception ex)
             {
+                _logger.LogError(ex.Message, ex);
                 return NotFound(new ErrorModel(404, ex.Message));
             }
         }
@@ -83,6 +88,7 @@ namespace CoffeeStoreApplication.Controllers
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex.Message, ex);
                 return NotFound(new ErrorModel(404, ex.Message));
             }
         }
@@ -100,6 +106,7 @@ namespace CoffeeStoreApplication.Controllers
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex.Message, ex);
                 return NotFound(new ErrorModel(404, ex.Message));
             }
         }

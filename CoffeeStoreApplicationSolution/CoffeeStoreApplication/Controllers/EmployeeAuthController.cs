@@ -15,11 +15,13 @@ namespace CoffeeStoreApplication.Controllers
     {
         private readonly IAuthLoginService<EmployeeLoginReturnDTO, EmployeeLoginDTO> _authLoginService;
         private readonly IAuthRegisterService<EmployeeRegisterReturnDTO, EmployeeRegisterDTO> _authRegisterService;
+        private readonly ILogger<EmployeeAuthController> _logger;
 
-        public EmployeeAuthController(IAuthLoginService<EmployeeLoginReturnDTO, EmployeeLoginDTO> authLoginService, IAuthRegisterService<EmployeeRegisterReturnDTO, EmployeeRegisterDTO> authRegisterService)
+        public EmployeeAuthController(IAuthLoginService<EmployeeLoginReturnDTO, EmployeeLoginDTO> authLoginService, IAuthRegisterService<EmployeeRegisterReturnDTO, EmployeeRegisterDTO> authRegisterService, ILogger<EmployeeAuthController> logger)
         {
             _authLoginService = authLoginService;
             _authRegisterService = authRegisterService;
+            _logger = logger;
         }
 
         [HttpPost("register/admin")]
@@ -35,6 +37,7 @@ namespace CoffeeStoreApplication.Controllers
             }
             catch (Exception ex)
             {
+                _logger.LogCritical(ex.Message, ex);
                 return BadRequest(new ErrorModel(400, ex.Message));
             }
         }
@@ -52,6 +55,7 @@ namespace CoffeeStoreApplication.Controllers
             }
             catch (Exception ex)
             {
+                _logger.LogCritical(ex.Message, ex);
                 return BadRequest(new ErrorModel(400, ex.Message));
             }
         }
@@ -69,6 +73,7 @@ namespace CoffeeStoreApplication.Controllers
             }
             catch (Exception ex)
             {
+                _logger.LogCritical(ex.Message, ex);
                 return BadRequest(new ErrorModel(400, ex.Message));
             }
         }
@@ -86,6 +91,7 @@ namespace CoffeeStoreApplication.Controllers
             }
             catch (Exception ex)
             {
+                _logger.LogCritical(ex.Message, ex);
                 return BadRequest(new ErrorModel(400, ex.Message));
             }
         }

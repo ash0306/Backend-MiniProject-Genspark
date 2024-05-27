@@ -18,6 +18,12 @@ namespace CoffeeStoreApplication.Services
             _mapper = mapper;
         }
 
+        /// <summary>
+        /// Adds a new product.
+        /// </summary>
+        /// <param name="productDTO">ProductDTO object containing product details</param>
+        /// <returns>ProductDTO object containing added product details</returns>
+        /// <exception cref="UnableToAddProductException">If unable to add the product</exception>
         public async Task<ProductDTO> AddProduct(ProductDTO productDTO)
         {
             Product product = _mapper.Map<Product>(productDTO);
@@ -34,6 +40,11 @@ namespace CoffeeStoreApplication.Services
             return productDTO;
         }
 
+        /// <summary>
+        /// Gets all products.
+        /// </summary>
+        /// <returns>List of ProductDTO objects containing all product details</returns>
+        /// <exception cref="NoProductsFoundException">If no products are found</exception>
         public async Task<IEnumerable<ProductDTO>> GetAllProducts()
         {
             var products = await _repository.GetAll();
@@ -48,7 +59,12 @@ namespace CoffeeStoreApplication.Services
             }
             return result;
         }
-        
+
+        /// <summary>
+        /// Gets all available products.
+        /// </summary>
+        /// <returns>List of ProductDTO objects containing available product details</returns>
+        /// <exception cref="NoProductsFoundException">If no products are found</exception>
         public async Task<IEnumerable<ProductDTO>> GetAllAvailableProducts()
         {
             var products = (await _repository.GetAll()).Where(p => p.Status == ProductStatus.Available);
@@ -64,6 +80,12 @@ namespace CoffeeStoreApplication.Services
             return result;
         }
 
+        /// <summary>
+        /// Gets a product by its ID.
+        /// </summary>
+        /// <param name="id">ID of the product</param>
+        /// <returns>ProductDTO object containing product details</returns>
+        /// <exception cref="NoSuchProductException">If the product is not found</exception>
         public async Task<ProductDTO> GetById(int id)
         {
             var product = await _repository.GetById(id);
@@ -76,6 +98,12 @@ namespace CoffeeStoreApplication.Services
             return productDTO;
         }
 
+        /// <summary>
+        /// Gets products by their category.
+        /// </summary>
+        /// <param name="category">Category of the products</param>
+        /// <returns>List of ProductDTO objects containing product details</returns>
+        /// <exception cref="NoProductsFoundException">If no products are found</exception>
         public async Task<IEnumerable<ProductDTO>> GetProductsByCategory(string category)
         {
             IList<Product> products = (await _repository.GetAll()).Where(p => p.Category.ToString() == category).ToList();
@@ -92,6 +120,12 @@ namespace CoffeeStoreApplication.Services
             return result;
         }
 
+        /// <summary>
+        /// Updates the price of a product.
+        /// </summary>
+        /// <param name="productPriceDTO">ProductPriceDTO object containing product ID and new price</param>
+        /// <returns>ProductPriceDTO object containing updated product price</returns>
+        /// <exception cref="NoSuchProductException">If the product is not found</exception>
         public async Task<ProductPriceDTO> UpdatePrice(ProductPriceDTO productPriceDTO)
         {
             var product = await _repository.GetById(productPriceDTO.Id);
@@ -105,6 +139,12 @@ namespace CoffeeStoreApplication.Services
             return productPriceDTO;
         }
 
+        /// <summary>
+        /// Updates the status of a product.
+        /// </summary>
+        /// <param name="productStatusDTO">ProductStatusDTO object containing product ID and new status</param>
+        /// <returns>ProductStatusDTO object containing updated product status</returns>
+        /// <exception cref="NoSuchProductException">If the product is not found</exception>
         public async Task<ProductStatusDTO> UpdateProductStatus(ProductStatusDTO productStatusDTO)
         {
             var product = await _repository.GetById(productStatusDTO.Id);
@@ -118,6 +158,12 @@ namespace CoffeeStoreApplication.Services
             return productStatusDTO;
         }
 
+        /// <summary>
+        /// Updates the stock of a product.
+        /// </summary>
+        /// <param name="productStockDTO">ProductStockDTO object containing product ID and new stock quantity</param>
+        /// <returns>ProductStockDTO object containing updated product stock</returns>
+        /// <exception cref="NoSuchProductException">If the product is not found</exception>
         public async Task<ProductStockDTO> UpdateProductStock(ProductStockDTO productStockDTO)
         {
             var product = await _repository.GetById(productStockDTO.Id);

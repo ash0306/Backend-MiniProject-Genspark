@@ -23,6 +23,13 @@ namespace CoffeeStoreApplication.Services
             _mapper = mapper;
         }
 
+        /// <summary>
+        /// Register a customer
+        /// </summary>
+        /// <param name="registerDTO">Gets the user details for registration</param>
+        /// <param name="role">Role of the user to be register</param>
+        /// <returns>The details of the registered user</returns>
+        /// <exception cref="UnableToRegisterException">Thrown if unable to register at the moment</exception>
         public async Task<CustomerRegisterReturnDTO> Register(CustomerRegisterDTO registerDTO, RoleType role)
         {
             Customer customer;
@@ -53,6 +60,12 @@ namespace CoffeeStoreApplication.Services
             }
         }
 
+        /// <summary>
+        /// Login the customer
+        /// </summary>
+        /// <param name="loginDTO">Email and password for customer login</param>
+        /// <returns>Returns the details of the logged in user</returns>
+        /// <exception cref="UnauthorizedUserException">Thrown if the email or password given by user is invalid</exception>
         public async Task<CustomerLoginReturnDTO> Login(CustomerLoginDTO loginDTO)
         {
             Customer customer = (await _repository.GetAll()).FirstOrDefault(c => c.Email == loginDTO.Email);
@@ -79,6 +92,12 @@ namespace CoffeeStoreApplication.Services
             throw new UnauthorizedUserException("Invalid email or password");
         }
 
+        /// <summary>
+        /// Compare the passwords of the user in DB and the password entered by user
+        /// </summary>
+        /// <param name="encryptedPassword">Hashed value of the password entered by user</param>
+        /// <param name="password">Hashed Password in the DB</param>
+        /// <returns></returns>
         private bool ComparePassword(byte[] encryptedPassword, byte[] password)
         {
             for (int i = 0; i < encryptedPassword.Length; i++)

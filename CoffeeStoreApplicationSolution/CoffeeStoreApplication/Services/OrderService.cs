@@ -34,6 +34,12 @@ namespace CoffeeStoreApplication.Services
             _customerOrderRepository = customerOrderRepo;
         }
 
+        /// <summary>
+        /// Adds a new order.
+        /// </summary>
+        /// <param name="orderDTO">OrderDTO object containing order details</param>
+        /// <returns>OrderReturnDTO object containing added order details</returns>
+        /// <exception cref="NoItemsFoundException">If no items are found in the order</exception>
         public async Task<OrderReturnDTO> AddOrder(OrderDTO orderDTO)
         {
             Order order;
@@ -84,6 +90,13 @@ namespace CoffeeStoreApplication.Services
             return orderReturnDTO;
         }
 
+        /// <summary>
+        /// Calculates the total price of the order.
+        /// </summary>
+        /// <param name="orderDTO">OrderDTO object containing order details</param>
+        /// <returns>Total price of the order</returns>
+        /// <exception cref="NoSuchProductException">If a product in the order is not found</exception>
+        /// <exception cref="ProductOutOfStockException">If a product in the order is out of stock</exception>
         public async Task<float> CalculateTotalPrice(OrderDTO orderDTO)
         {
             float totalPrice = 0;   
@@ -98,6 +111,14 @@ namespace CoffeeStoreApplication.Services
             }
             return totalPrice;
         }
+        
+        /// <summary>
+        /// Calculates the loyalty discount for the order.
+        /// </summary>
+        /// <param name="orderDTO">OrderDTO object containing order details</param>
+        /// <param name="totalPrice">Total price of the order</param>
+        /// <returns>Loyalty discount for the order</returns>
+        /// <exception cref="InsufficientPointsException">If the customer has insufficient loyalty points</exception>
         public async Task<float> CalculateLoyaltyDiscount(OrderDTO orderDTO, float totalPrice)
         {
             float loyaltyDiscount = 0;
@@ -114,6 +135,15 @@ namespace CoffeeStoreApplication.Services
 
             return loyaltyDiscount;
         }
+        
+        /// <summary>
+        /// Adds order items to the order.
+        /// </summary>
+        /// <param name="orderDTO">OrderDTO object containing order details</param>
+        /// <param name="orderId">ID of the order</param>
+        /// <returns>List of added OrderItem objects</returns>
+        /// <exception cref="UnableToUpdateProductException">If unable to update the product stock</exception>
+        /// <exception cref="UnableToAddOrderItemException">If unable to add the order item</exception>
         public async Task<IEnumerable<OrderItem>> AddOrderItems(OrderDTO orderDTO, int orderId)
         {
             IList<OrderItem> orderItems = new List<OrderItem>();
@@ -146,6 +176,13 @@ namespace CoffeeStoreApplication.Services
             return orderItems;
         }
 
+        /// <summary>
+        /// Cancels an order.
+        /// </summary>
+        /// <param name="orderId">ID of the order to be cancelled</param>
+        /// <returns>OrderReturnDTO object containing cancelled order details</returns>
+        /// <exception cref="NoSuchOrderException">If the order is not found or is already cancelled</exception>
+        /// <exception cref="UnableToCancelOrderException">If the order cannot be cancelled</exception>
         public async Task<OrderReturnDTO> CancelOrder(int orderId)
         {
             var order = await _orderRepository.GetById(orderId);
@@ -162,8 +199,13 @@ namespace CoffeeStoreApplication.Services
                 throw new UnableToCancelOrderException("Your order is already being prepared so cannot cancel order");
             }
             var items = (await _orderItemRepository.GetAll()).Where(oi => oi.OrderId == order.Id);
-            
-            foreach(var item in items)
+            //foreach (var item in order.OrderItems)
+            //{
+            //    var product = await _productRepository.GetById(item.ProductId);
+            //    product.Stock += 1;
+            //    await _productRepository.Update(product);
+            //}
+            foreach (var item in items)
             {
                 var product = await _productRepository.GetById(item.ProductId);
                 product.Stock += 1;
@@ -176,6 +218,12 @@ namespace CoffeeStoreApplication.Services
             return orderReturnDTO;
         }
 
+
+        /// <summary>
+        /// Gets all pending orders.
+        /// </summary>
+        /// <returns>List of OrderReturnDTO objects containing pending order details</returns>
+        /// <exception cref="NoSuchOrderException">If no pending orders are found</exception>
         public async Task<IEnumerable<OrderReturnDTO>> GetAllPendingOrders()
         {
             var orders = (await _orderRepository.GetAll()).Where(o=> o.Status != OrderStatus.Completed && o.Status != OrderStatus.Cancelled);
@@ -191,6 +239,14 @@ namespace CoffeeStoreApplication.Services
             return orderReturnDTOs;
         }
 
+
+        /// <summary>
+        /// Updates the status of an order.
+        /// </summary>
+        /// <param name="orderStatusDTO">OrderStatusDTO object containing the order ID and new status</param>
+        /// <returns>OrderStatusDTO object containing the updated order status</returns>
+        /// <exception cref="NoSuchOrderException">If the order is not found</exception>
+        /// <exception cref="UnableToUpdateOrderException">If unable to update the order status</exception>
         public async Task<OrderStatusDTO> UpdateOrderStatus(OrderStatusDTO orderStatusDTO)
         {
             var order = await _orderRepository.GetById(orderStatusDTO.OrderId);

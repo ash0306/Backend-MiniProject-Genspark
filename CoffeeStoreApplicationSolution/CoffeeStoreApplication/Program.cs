@@ -65,6 +65,8 @@ namespace CoffeeStoreApplication
 
                 });
 
+            builder.Services.AddLogging(l => l.AddLog4Net());
+            
             #region Contexts
             builder.Services.AddDbContext<CoffeeStoreContext>(
                 options => options.UseSqlServer(builder.Configuration.GetConnectionString("defaultConnection"))
@@ -81,6 +83,7 @@ namespace CoffeeStoreApplication
             #endregion
 
             #region Services
+
             #region Authentication Services
             builder.Services.AddScoped<IAuthRegisterService<CustomerRegisterReturnDTO, CustomerRegisterDTO>, CustomerAuthService>();
             builder.Services.AddScoped<IAuthLoginService<CustomerLoginReturnDTO, CustomerLoginDTO>, CustomerAuthService>();
@@ -88,6 +91,7 @@ namespace CoffeeStoreApplication
             builder.Services.AddScoped<IAuthRegisterService<EmployeeRegisterReturnDTO, EmployeeRegisterDTO>, EmployeeAuthService>();
             builder.Services.AddScoped<IAuthLoginService<EmployeeLoginReturnDTO, EmployeeLoginDTO>, EmployeeAuthService>();
             #endregion
+
             builder.Services.AddScoped<IEmployeeService, EmployeeService>();
             builder.Services.AddScoped<ICustomerService, CustomerService>();
             builder.Services.AddScoped<IProductService, ProductService>();
