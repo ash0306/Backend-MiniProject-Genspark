@@ -3,7 +3,7 @@
 namespace CoffeeStoreApplication.Exceptions
 {
     [Serializable]
-    internal class InsufficientPointsException : Exception
+    public class InsufficientPointsException : Exception
     {
         public InsufficientPointsException()
         {
