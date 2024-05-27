@@ -5,8 +5,6 @@ VisualStudioVersion = 17.9.34723.18
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CoffeeStoreApplication", "CoffeeStoreApplication\CoffeeStoreApplication.csproj", "{DC10D5D5-EF50-4A10-A54B-C0B822E0E9A8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CoffeeStoreUnitTest", "CoffeeStoreUnitTest\CoffeeStoreUnitTest.csproj", "{0FCFA1E8-E956-413E-8663-CD248789471D}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -17,10 +15,6 @@ Global
 		{DC10D5D5-EF50-4A10-A54B-C0B822E0E9A8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DC10D5D5-EF50-4A10-A54B-C0B822E0E9A8}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DC10D5D5-EF50-4A10-A54B-C0B822E0E9A8}.Release|Any CPU.Build.0 = Release|Any CPU
-		{0FCFA1E8-E956-413E-8663-CD248789471D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{0FCFA1E8-E956-413E-8663-CD248789471D}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{0FCFA1E8-E956-413E-8663-CD248789471D}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{0FCFA1E8-E956-413E-8663-CD248789471D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
