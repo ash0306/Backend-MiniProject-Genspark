@@ -3,7 +3,7 @@
 namespace CoffeeStoreApplication.Exceptions
 {
     [Serializable]
-    internal class NoItemsFoundException : Exception
+    public class NoItemsFoundException : Exception
     {
         public NoItemsFoundException()
         {
