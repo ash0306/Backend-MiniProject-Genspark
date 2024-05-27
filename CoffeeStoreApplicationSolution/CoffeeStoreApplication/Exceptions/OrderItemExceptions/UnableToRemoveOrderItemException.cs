@@ -3,7 +3,7 @@
 namespace CoffeeStoreApplication.Exceptions.OrderItemExceptions
 {
     [Serializable]
-    internal class UnableToRemoveOrderItemException : Exception
+    public class UnableToRemoveOrderItemException : Exception
     {
         public UnableToRemoveOrderItemException()
         {

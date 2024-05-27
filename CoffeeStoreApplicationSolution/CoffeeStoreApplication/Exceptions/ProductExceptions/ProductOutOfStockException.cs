@@ -3,7 +3,7 @@
 namespace CoffeeStoreApplication.Exceptions.ProductExceptions
 {
     [Serializable]
-    internal class ProductOutOfStockException : Exception
+    public class ProductOutOfStockException : Exception
     {
         public ProductOutOfStockException()
         {

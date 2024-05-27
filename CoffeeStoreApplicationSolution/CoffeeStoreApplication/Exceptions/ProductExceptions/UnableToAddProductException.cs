@@ -3,7 +3,7 @@
 namespace CoffeeStoreApplication.Exceptions.ProductExceptions
 {
     [Serializable]
-    internal class UnableToAddProductException : Exception
+    public class UnableToAddProductException : Exception
     {
         public UnableToAddProductException()
         {

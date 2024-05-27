@@ -3,7 +3,7 @@
 namespace CoffeeStoreApplication.Exceptions.EmployeeExceptions
 {
     [Serializable]
-    internal class UnableToAddEmployeeException : Exception
+    public class UnableToAddEmployeeException : Exception
     {
         public UnableToAddEmployeeException()
         {
