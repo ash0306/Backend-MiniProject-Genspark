@@ -3,7 +3,7 @@
 namespace CoffeeStoreApplication.Exceptions.EmployeeExceptions
 {
     [Serializable]
-    internal class UnableToRemoveEmployeeException : Exception
+    public class UnableToRemoveEmployeeException : Exception
     {
         public UnableToRemoveEmployeeException()
         {

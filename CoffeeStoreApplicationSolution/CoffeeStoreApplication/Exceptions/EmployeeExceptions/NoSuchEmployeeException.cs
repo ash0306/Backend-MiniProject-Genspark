@@ -3,7 +3,7 @@
 namespace CoffeeStoreApplication.Exceptions.EmployeeExceptions
 {
     [Serializable]
-    internal class NoSuchEmployeeException : Exception
+    public class NoSuchEmployeeException : Exception
     {
         public NoSuchEmployeeException()
         {

@@ -3,7 +3,7 @@
 namespace CoffeeStoreApplication.Exceptions.CustomerOrderExceptions
 {
     [Serializable]
-    internal class UnableToUpdateCustomerOrderException : Exception
+    public class UnableToUpdateCustomerOrderException : Exception
     {
         public UnableToUpdateCustomerOrderException()
         {

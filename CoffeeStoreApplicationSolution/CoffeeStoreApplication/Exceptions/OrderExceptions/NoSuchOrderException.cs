@@ -3,7 +3,7 @@
 namespace CoffeeStoreApplication.Exceptions.OrderExceptions
 {
     [Serializable]
-    internal class NoSuchOrderException : Exception
+    public class NoSuchOrderException : Exception
     {
         public NoSuchOrderException()
         {
