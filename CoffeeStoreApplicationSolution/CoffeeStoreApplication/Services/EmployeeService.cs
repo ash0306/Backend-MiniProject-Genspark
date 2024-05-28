@@ -144,5 +144,62 @@ namespace CoffeeStoreApplication.Services
 
             return employeeStatusDTO;
         }
+
+        public async Task<IEnumerable<EmployeeDTO>> GetAllAdmins()
+        {
+            var employees = (await _repository.GetAll()).Where(e=>e.Role == RoleType.Admin);
+
+            if (employees.Count() == 0)
+            {
+                _logger.LogError("No employees found");
+                throw new NoEmployeesFoundException("No employees found");
+            }
+
+            IList<EmployeeDTO> result = new List<EmployeeDTO>();
+
+            foreach (var employee in employees)
+            {
+                result.Add(_mapper.Map<EmployeeDTO>(employee));
+            }
+            return result;
+        }
+
+        public async Task<IEnumerable<EmployeeDTO>> GetAllManagers()
+        {
+            var employees = (await _repository.GetAll()).Where(e => e.Role == RoleType.Manager);
+
+            if (employees.Count() == 0)
+            {
+                _logger.LogError("No employees found");
+                throw new NoEmployeesFoundException("No employees found");
+            }
+
+            IList<EmployeeDTO> result = new List<EmployeeDTO>();
+
+            foreach (var employee in employees)
+            {
+                result.Add(_mapper.Map<EmployeeDTO>(employee));
+            }
+            return result;
+        }
+
+        public async Task<IEnumerable<EmployeeDTO>> GetAllBaristas()
+        {
+            var employees = (await _repository.GetAll()).Where(e => e.Role == RoleType.Barista);
+
+            if (employees.Count() == 0)
+            {
+                _logger.LogError("No employees found");
+                throw new NoEmployeesFoundException("No employees found");
+            }
+
+            IList<EmployeeDTO> result = new List<EmployeeDTO>();
+
+            foreach (var employee in employees)
+            {
+                result.Add(_mapper.Map<EmployeeDTO>(employee));
+            }
+            return result;
+        }
     }
 }

@@ -19,6 +19,7 @@ namespace CoffeeStoreApplication.Services
         private readonly IRepository<int, OrderItem> _orderItemRepository;
         private readonly IRepository<int, CustomerOrder> _customerOrderRepository;
         private readonly ILogger<OrderService> _logger;
+        private readonly IOrderItemService _orderItemService;
 
         public OrderService(IRepository<int, Order> orderRepo, 
             IMapper mapper, 
@@ -26,7 +27,8 @@ namespace CoffeeStoreApplication.Services
             IRepository<int,Customer> customerRepo, 
             IRepository<int, OrderItem> orderItemRepo,
             IRepository<int,CustomerOrder> customerOrderRepo,
-            ILogger<OrderService> logger)
+            ILogger<OrderService> logger,
+            IOrderItemService orderItemService)
         {
             _orderRepository = orderRepo;
             _mapper = mapper;
@@ -35,6 +37,7 @@ namespace CoffeeStoreApplication.Services
             _orderItemRepository = orderItemRepo;
             _customerOrderRepository = customerOrderRepo;
             _logger = logger;
+            _orderItemService = orderItemService;
         }
 
         /// <summary>
@@ -236,7 +239,10 @@ namespace CoffeeStoreApplication.Services
             IList<OrderReturnDTO> orderReturnDTOs = new List<OrderReturnDTO>();
             foreach (var item in orders)
             {
-                orderReturnDTOs.Add(_mapper.Map<OrderReturnDTO>(item));
+                var orderitems = (await _orderItemService.GetOrderItemsByOrderId(item.Id)).ToList();
+                OrderReturnDTO returnDTO = _mapper.Map<OrderReturnDTO>(item);
+                returnDTO.OrderItems = orderitems;
+                orderReturnDTOs.Add(returnDTO);
             }
             return orderReturnDTOs;
         }
