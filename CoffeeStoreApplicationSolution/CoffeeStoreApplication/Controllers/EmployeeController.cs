@@ -21,7 +21,7 @@ namespace CoffeeStoreApplication.Controllers
             _logger = logger;
         }
 
-        //[Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin")]
         [HttpGet("getAll")]
         [ProducesResponseType(typeof(IEnumerable<EmployeeDTO>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status404NotFound)]
@@ -111,7 +111,7 @@ namespace CoffeeStoreApplication.Controllers
             }
         }
 
-        //[Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin")]
         [HttpGet("getAllAdmins")]
         [ProducesResponseType(typeof(IEnumerable<EmployeeDTO>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status404NotFound)]
@@ -129,7 +129,7 @@ namespace CoffeeStoreApplication.Controllers
             }
         }
 
-        //[Authorize(Roles = "Admin,Managers")]
+        [Authorize(Roles = "Admin,Managers")]
         [HttpGet("getAllManagers")]
         [ProducesResponseType(typeof(IEnumerable<EmployeeDTO>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status404NotFound)]
@@ -147,7 +147,7 @@ namespace CoffeeStoreApplication.Controllers
             }
         }
 
-        //[Authorize(Roles = "Admin,Manager")]
+        [Authorize(Roles = "Admin,Manager")]
         [HttpGet("getAllBaristas")]
         [ProducesResponseType(typeof(IEnumerable<EmployeeDTO>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status404NotFound)]
