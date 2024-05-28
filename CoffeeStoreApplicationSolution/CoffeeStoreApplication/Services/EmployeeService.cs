@@ -11,11 +11,13 @@ namespace CoffeeStoreApplication.Services
     {
         private readonly IRepository<int, Employee> _repository;
         private readonly IMapper _mapper;
+        private readonly ILogger<EmployeeService> _logger;
 
-        public EmployeeService(IRepository<int, Employee> repository, IMapper mapper)
+        public EmployeeService(IRepository<int, Employee> repository, IMapper mapper, ILogger<EmployeeService> logger)
         {
             _repository = repository;
             _mapper = mapper;
+            _logger = logger;
         }
 
         /// <summary>
@@ -29,6 +31,7 @@ namespace CoffeeStoreApplication.Services
 
             if(employees.Count() == 0)
             {
+                _logger.LogError("No employees found");
                 throw new NoEmployeesFoundException("No employees found");
             }
 
@@ -53,6 +56,7 @@ namespace CoffeeStoreApplication.Services
 
             if(employee == null)
             {
+                _logger.LogError("No employee found");
                 throw new NoSuchEmployeeException($"No employee with ID {id} exists");
             }
 
@@ -72,6 +76,7 @@ namespace CoffeeStoreApplication.Services
             
             if (employee == null)
             {
+                _logger.LogError("No employee found");
                 throw new NoSuchEmployeeException($"No employee with the given ID exists");
             }
             employee.Salary = employeeSalaryDTO.EmployeeSalary;
@@ -98,6 +103,7 @@ namespace CoffeeStoreApplication.Services
 
             if (employee == null)
             {
+                _logger.LogError("No employee found");
                 throw new NoSuchEmployeeException($"No employee with the given ID exists");
             }
             employee.Status = EmployeeStatus.Active;
@@ -124,6 +130,7 @@ namespace CoffeeStoreApplication.Services
 
             if (employee == null)
             {
+                _logger.LogError("No employee found");
                 throw new NoSuchEmployeeException($"No employee with the given ID exists");
             }
             employee.Status = EmployeeStatus.Inactive;

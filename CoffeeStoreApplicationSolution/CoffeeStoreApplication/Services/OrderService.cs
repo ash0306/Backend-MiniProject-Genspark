@@ -18,13 +18,15 @@ namespace CoffeeStoreApplication.Services
         private readonly IRepository<int, Customer> _customerRepository;
         private readonly IRepository<int, OrderItem> _orderItemRepository;
         private readonly IRepository<int, CustomerOrder> _customerOrderRepository;
+        private readonly ILogger<OrderService> _logger;
 
         public OrderService(IRepository<int, Order> orderRepo, 
             IMapper mapper, 
             IRepository<int, Product> productRepo, 
             IRepository<int,Customer> customerRepo, 
             IRepository<int, OrderItem> orderItemRepo,
-            IRepository<int,CustomerOrder> customerOrderRepo)
+            IRepository<int,CustomerOrder> customerOrderRepo,
+            ILogger<OrderService> logger)
         {
             _orderRepository = orderRepo;
             _mapper = mapper;
@@ -32,6 +34,7 @@ namespace CoffeeStoreApplication.Services
             _customerRepository = customerRepo;
             _orderItemRepository = orderItemRepo;
             _customerOrderRepository = customerOrderRepo;
+            _logger = logger;
         }
 
         /// <summary>
@@ -47,9 +50,10 @@ namespace CoffeeStoreApplication.Services
             float loyaltyDiscount = 0;
             IList<OrderItem> orderItems = new List<OrderItem>();
 
-            if(orderDTO.OrderItems.Count() == 0)
+            if(orderDTO.OrderItems.Count() == 0) {
+                _logger.LogError("No items in order");
                 throw new NoItemsFoundException("This order has no items!! Add atleast 1 item to place an order.");
-
+            }
             totalPrice = await CalculateTotalPrice(orderDTO);
 
             if(orderDTO.UseLoyaltyPoints)
@@ -188,6 +192,7 @@ namespace CoffeeStoreApplication.Services
             var order = await _orderRepository.GetById(orderId);
             if(order == null)
             {
+                _logger.LogError("No order found");
                 throw new NoSuchOrderException($"No order found with ID {orderId}");
             }
 
@@ -199,12 +204,7 @@ namespace CoffeeStoreApplication.Services
                 throw new UnableToCancelOrderException("Your order is already being prepared so cannot cancel order");
             }
             var items = (await _orderItemRepository.GetAll()).Where(oi => oi.OrderId == order.Id);
-            //foreach (var item in order.OrderItems)
-            //{
-            //    var product = await _productRepository.GetById(item.ProductId);
-            //    product.Stock += 1;
-            //    await _productRepository.Update(product);
-            //}
+            
             foreach (var item in items)
             {
                 var product = await _productRepository.GetById(item.ProductId);
@@ -228,9 +228,11 @@ namespace CoffeeStoreApplication.Services
         {
             var orders = (await _orderRepository.GetAll()).Where(o=> o.Status != OrderStatus.Completed && o.Status != OrderStatus.Cancelled);
 
-            if(orders.Count() == 0)
+            if (orders.Count() == 0)
+            {
+                _logger.LogError("No orders found");
                 throw new NoSuchOrderException("No pending orders found.");
-
+            }
             IList<OrderReturnDTO> orderReturnDTOs = new List<OrderReturnDTO>();
             foreach (var item in orders)
             {
@@ -252,6 +254,7 @@ namespace CoffeeStoreApplication.Services
             var order = await _orderRepository.GetById(orderStatusDTO.OrderId);
             if (order == null)
             {
+                _logger.LogError("No order found");
                 throw new NoSuchOrderException($"No order found with ID {orderStatusDTO.OrderId}");
             }
             order.Status = (OrderStatus)Enum.Parse(typeof(OrderStatus), orderStatusDTO.Status);

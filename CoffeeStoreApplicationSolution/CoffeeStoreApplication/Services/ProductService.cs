@@ -11,11 +11,13 @@ namespace CoffeeStoreApplication.Services
     {
         private readonly IRepository<int, Product> _repository;
         private readonly IMapper _mapper;
+        private readonly ILogger<ProductService> _logger;
 
-        public ProductService(IRepository<int, Product> repository, IMapper mapper)
+        public ProductService(IRepository<int, Product> repository, IMapper mapper, ILogger<ProductService> logger)
         {
             _repository = repository;
             _mapper = mapper;
+            _logger = logger;
         }
 
         /// <summary>
@@ -33,6 +35,7 @@ namespace CoffeeStoreApplication.Services
             var newProduct = await _repository.Add(product);
             if(newProduct == null)
             {
+                _logger.LogError("Unable to add product");
                 throw new UnableToAddProductException("Unable to add product at the moment");
             }
 
@@ -50,6 +53,7 @@ namespace CoffeeStoreApplication.Services
             var products = await _repository.GetAll();
             if(products == null)
             {
+                _logger.LogError("No products found");
                 throw new NoProductsFoundException($"No products found!!");
             }
             IList<ProductDTO> result = new List<ProductDTO>();
@@ -70,6 +74,7 @@ namespace CoffeeStoreApplication.Services
             var products = (await _repository.GetAll()).Where(p => p.Status == ProductStatus.Available);
             if(products == null)
             {
+                _logger.LogError("No products found");
                 throw new NoProductsFoundException($"No products found!!");
             }
             IList<ProductDTO> result = new List<ProductDTO>();
@@ -91,6 +96,7 @@ namespace CoffeeStoreApplication.Services
             var product = await _repository.GetById(id);
             if(product == null)
             {
+                _logger.LogError("No product found");
                 throw new NoSuchProductException($"No product with ID {id} exists");
             }
             ProductDTO productDTO = _mapper.Map<ProductDTO>(product);
@@ -108,9 +114,10 @@ namespace CoffeeStoreApplication.Services
         {
             IList<Product> products = (await _repository.GetAll()).Where(p => p.Category.ToString() == category).ToList();
 
-            if (products.Count == 0)
+            if (products.Count == 0){
+                _logger.LogError("No products found");
                 throw new NoProductsFoundException($"No products found");
-
+            }
             IList<ProductDTO> result = new List<ProductDTO>();
             foreach (var item in products)
             {
@@ -130,7 +137,10 @@ namespace CoffeeStoreApplication.Services
         {
             var product = await _repository.GetById(productPriceDTO.Id);
             if (product == null)
+            {
+                _logger.LogError("No product found");
                 throw new NoSuchProductException($"No product with ID {productPriceDTO.Id} exists");
+            }
             
             product.Price = productPriceDTO.Price;
             var updatedProduct = await _repository.Update(product);
@@ -149,7 +159,10 @@ namespace CoffeeStoreApplication.Services
         {
             var product = await _repository.GetById(productStatusDTO.Id);
             if (product == null)
-                throw new NoSuchProductException($"No product with ID {productStatusDTO.Id} exists");
+            {
+                _logger.LogError("No product found");
+                throw new NoSuchProductException($"No product with ID {productStatusDTO.Id} exists"); 
+            }
 
             product.Status = (ProductStatus)Enum.Parse(typeof(ProductStatus), productStatusDTO.Status);
             var updatedProduct = await _repository.Update(product);
@@ -168,7 +181,10 @@ namespace CoffeeStoreApplication.Services
         {
             var product = await _repository.GetById(productStockDTO.Id);
             if (product == null)
+            {
+                _logger.LogError("No product found");
                 throw new NoSuchProductException($"No product with ID {productStockDTO.Id} exists");
+            }
 
             product.Stock = productStockDTO.Stock;
             var updatedProduct = await _repository.Update(product);

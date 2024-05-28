@@ -14,17 +14,19 @@ namespace CoffeeStoreApplication.Services
         private readonly IRepository<int, Order> _orderRepository;
         private readonly IRepository<int, Customer> _customerRepository;
         private readonly IOrderItemService _orderItemService;
+        private readonly ILogger<CustomerOrderService> _logger;
 
         public CustomerOrderService(IRepository<int, CustomerOrder> repository, IMapper mapper, 
             IRepository<int, Order> orderRepo, 
             IRepository<int, Customer> customerRepo,
-            IOrderItemService orderItemService)
+            IOrderItemService orderItemService, ILogger<CustomerOrderService> logger)
         {
             _repository = repository;
             _mapper = mapper;
             _orderRepository = orderRepo;
             _customerRepository = customerRepo;
             _orderItemService = orderItemService;
+            _logger = logger;
         }
 
         /// <summary>
@@ -40,6 +42,7 @@ namespace CoffeeStoreApplication.Services
             
             if(result.Count == 0)
             {
+                _logger.LogError("No orders found");
                 throw new NoOrdersFoundException($"No orders for customer with ID {customerId} found");
             }
             var customer = await _customerRepository.GetById(customerId);

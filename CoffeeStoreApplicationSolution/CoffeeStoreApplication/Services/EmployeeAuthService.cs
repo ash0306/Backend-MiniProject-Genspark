@@ -14,12 +14,14 @@ namespace CoffeeStoreApplication.Services
         private readonly IRepository<int, Employee> _repository;
         private readonly ITokenService _tokenService;
         private readonly IMapper _mapper;
+        private readonly ILogger<EmployeeAuthService> _logger;
 
-        public EmployeeAuthService(IRepository<int,Employee> repository, ITokenService tokenService, IMapper mapper)
+        public EmployeeAuthService(IRepository<int,Employee> repository, ITokenService tokenService, IMapper mapper, ILogger<EmployeeAuthService> logger)
         {
             _repository = repository;
             _tokenService = tokenService;
             _mapper = mapper;
+            _logger = logger;
         }
 
         /// <summary>
@@ -39,6 +41,7 @@ namespace CoffeeStoreApplication.Services
                 var alreadyPresent = (await _repository.GetAll()).FirstOrDefault(e => e.Email == registerDTO.Email);
                 if (alreadyPresent != null)
                 {
+                    _logger.LogCritical("User with Email already exists");
                     throw new UserAlreadyExistsException($"User with this Email already exists");
                 }
 
@@ -62,6 +65,7 @@ namespace CoffeeStoreApplication.Services
             }
             catch
             {
+                _logger.LogCritical("Could not register");
                 throw new UnableToRegisterException($"Unable to register at the moment");
             }
         }
@@ -77,6 +81,7 @@ namespace CoffeeStoreApplication.Services
             Employee employee = (await _repository.GetAll()).FirstOrDefault(c => c.Email == loginDTO.Email);
             if (employee == null)
             {
+                _logger.LogError("Could not login");
                 throw new UnauthorizedUserException("Invalid email or password");
             }
 
@@ -101,6 +106,7 @@ namespace CoffeeStoreApplication.Services
                 return returnDTO;
             }
 
+            _logger.LogError("Could not login");
             throw new UnauthorizedUserException("Invalid email or password");
         }
 
