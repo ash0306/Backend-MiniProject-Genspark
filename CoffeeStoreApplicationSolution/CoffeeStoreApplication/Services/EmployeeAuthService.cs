@@ -55,7 +55,10 @@ namespace CoffeeStoreApplication.Services
                 {
                     employee.Status = EmployeeStatus.Active;
                 }
-                employee.Status = EmployeeStatus.Inactive;
+                else 
+                {
+                    employee.Status = EmployeeStatus.Inactive;
+                }
 
                 var newEmployee = await _repository.Add(employee);
 
@@ -63,10 +66,10 @@ namespace CoffeeStoreApplication.Services
 
                 return returnDTO;
             }
-            catch
+            catch(Exception ex) 
             {
                 _logger.LogCritical("Could not register");
-                throw new UnableToRegisterException($"Unable to register at the moment");
+                throw new UnableToRegisterException(ex.Message);
             }
         }
 
