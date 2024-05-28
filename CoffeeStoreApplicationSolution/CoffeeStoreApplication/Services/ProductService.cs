@@ -165,6 +165,14 @@ namespace CoffeeStoreApplication.Services
             }
 
             product.Status = (ProductStatus)Enum.Parse(typeof(ProductStatus), productStatusDTO.Status);
+            if(product.Status == ProductStatus.Unavailable || product.Status == ProductStatus.Discontinued)
+            {
+                product.Stock = 0;
+            }
+            else
+            {
+                product.Stock = 10;
+            }
             var updatedProduct = await _repository.Update(product);
 
             productStatusDTO = _mapper.Map<ProductStatusDTO>(updatedProduct);
@@ -187,6 +195,15 @@ namespace CoffeeStoreApplication.Services
             }
 
             product.Stock = productStockDTO.Stock;
+            if(product.Stock <= 0)
+            {
+                product.Status = ProductStatus.Unavailable;
+            }
+            else if(product.Stock >= 1)
+            {
+                product.Status = ProductStatus.Available;
+            }
+
             var updatedProduct = await _repository.Update(product);
 
             productStockDTO = _mapper.Map<ProductStockDTO>(updatedProduct);

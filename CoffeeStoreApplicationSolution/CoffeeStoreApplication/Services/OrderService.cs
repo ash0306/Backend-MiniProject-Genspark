@@ -5,6 +5,7 @@ using CoffeeStoreApplication.Exceptions.OrderItemExceptions;
 using CoffeeStoreApplication.Exceptions.ProductExceptions;
 using CoffeeStoreApplication.Interfaces;
 using CoffeeStoreApplication.Models;
+using CoffeeStoreApplication.Models.DTOs.Customer;
 using CoffeeStoreApplication.Models.DTOs.Order;
 using CoffeeStoreApplication.Models.Enum;
 
@@ -20,15 +21,13 @@ namespace CoffeeStoreApplication.Services
         private readonly IRepository<int, CustomerOrder> _customerOrderRepository;
         private readonly ILogger<OrderService> _logger;
         private readonly IOrderItemService _orderItemService;
+        private readonly ICustomerService _customerService;
 
-        public OrderService(IRepository<int, Order> orderRepo, 
-            IMapper mapper, 
-            IRepository<int, Product> productRepo, 
-            IRepository<int,Customer> customerRepo, 
-            IRepository<int, OrderItem> orderItemRepo,
-            IRepository<int,CustomerOrder> customerOrderRepo,
-            ILogger<OrderService> logger,
-            IOrderItemService orderItemService)
+        public OrderService(IRepository<int, Order> orderRepo, IMapper mapper, 
+            IRepository<int, Product> productRepo, IRepository<int,Customer> customerRepo, 
+            IRepository<int, OrderItem> orderItemRepo,IRepository<int,CustomerOrder> customerOrderRepo,
+            ILogger<OrderService> logger, IOrderItemService orderItemService,
+            ICustomerService customerService)
         {
             _orderRepository = orderRepo;
             _mapper = mapper;
@@ -38,6 +37,7 @@ namespace CoffeeStoreApplication.Services
             _customerOrderRepository = customerOrderRepo;
             _logger = logger;
             _orderItemService = orderItemService;
+            _customerService = customerService;
         }
 
         /// <summary>
@@ -66,9 +66,9 @@ namespace CoffeeStoreApplication.Services
             }
             else
             {
-                var customer = (await _customerRepository.GetAll()).FirstOrDefault(c => c.Id == orderDTO.CustomerId);
-                customer.LoyaltyPoints += (int)(totalPrice / 10);
-                await _customerRepository.Update(customer);
+                var customer = await _customerService.GetCustomerById(orderDTO.CustomerId);
+                var loyaltyPoints = (int)(totalPrice / 10);
+                await _customerService.UpdateLoyaltyPoints(new LoyaltyPointsDTO() { Email =  customer.Email, LoyaltyPoints = loyaltyPoints});
             }
 
             order = new Order()
@@ -168,6 +168,10 @@ namespace CoffeeStoreApplication.Services
                 orderItems.Add(orderItem);
 
                 product.Stock -= 1;
+                if(product.Stock <= 0)
+                {
+                    product.Status = ProductStatus.Unavailable;
+                }
                 var updatedProduct = await _productRepository.Update(product);
                 if(updatedProduct == null)
                 {
@@ -212,6 +216,10 @@ namespace CoffeeStoreApplication.Services
             {
                 var product = await _productRepository.GetById(item.ProductId);
                 product.Stock += 1;
+                if(product.Stock == 1)
+                {
+                    product.Status = ProductStatus.Available;
+                }
                 await _productRepository.Update(product);
             }
             order.Status = OrderStatus.Cancelled;
