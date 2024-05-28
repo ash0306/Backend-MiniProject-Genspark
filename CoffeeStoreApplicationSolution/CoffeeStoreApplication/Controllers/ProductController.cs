@@ -93,6 +93,24 @@ namespace CoffeeStoreApplication.Controllers
         }
 
         [Authorize(Roles = "Manager,Barista")]
+        [HttpGet("getByName")]
+        [ProducesResponseType(typeof(ProductDTO), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status404NotFound)]
+        public async Task<ActionResult<ProductDTO>> GetProductByName(string name)
+        {
+            try
+            {
+                var product = await _productService.GetByName(name);
+                return Ok(product);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message, ex);
+                return NotFound(new ErrorModel(404, ex.Message));
+            }
+        }
+
+        [Authorize(Roles = "Manager,Barista")]
         [HttpGet("getByCategory")]
         [ProducesResponseType(typeof(IEnumerable<ProductDTO>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status404NotFound)]
@@ -113,7 +131,7 @@ namespace CoffeeStoreApplication.Controllers
         [Authorize(Roles = "Manager")]
         [HttpPut("updatePrice")]
         [ProducesResponseType(typeof(ProductPriceDTO), StatusCodes.Status200OK)]
-        [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status409Conflict)]
+        [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status404NotFound)]
         public async Task<ActionResult<ProductPriceDTO>> UpdateProductPrice(ProductPriceDTO productPriceDTO)
         {
             try
@@ -124,14 +142,14 @@ namespace CoffeeStoreApplication.Controllers
             catch(Exception ex)
             {
                 _logger.LogError(ex.Message, ex);
-                return Conflict(new ErrorModel(409, ex.Message));
+                return NotFound(new ErrorModel(409, ex.Message));
             }
         }
 
         [Authorize(Roles = "Manager,Barista")]
         [HttpPut("updateStatus")]
         [ProducesResponseType(typeof(ProductStatusDTO), StatusCodes.Status200OK)]
-        [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status409Conflict)]
+        [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status404NotFound)]
         public async Task<ActionResult<ProductStatusDTO>> UpdateProductStatus(ProductStatusDTO productStatusDTO)
         {
             try
@@ -142,14 +160,14 @@ namespace CoffeeStoreApplication.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(ex.Message, ex);
-                return Conflict(new ErrorModel(409, ex.Message));
+                return NotFound(new ErrorModel(409, ex.Message));
             }
         }
 
         [Authorize(Roles = "Manager,Barista")]
         [HttpPut("updateStock")]
         [ProducesResponseType(typeof(ProductStockDTO), StatusCodes.Status200OK)]
-        [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status409Conflict)]
+        [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status404NotFound)]
         public async Task<ActionResult<ProductStockDTO>> UpdateProductStock(ProductStockDTO productStock)
         {
             try
@@ -160,7 +178,7 @@ namespace CoffeeStoreApplication.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(ex.Message, ex);
-                return Conflict(new ErrorModel(409, ex.Message));
+                return NotFound(new ErrorModel(409, ex.Message));
             }
         }
     }

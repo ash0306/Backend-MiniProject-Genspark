@@ -7,7 +7,7 @@ namespace CoffeeStoreApplication.Models.DTOs.Product
     public class ProductStatusDTO
     {
         [Required]
-        public int Id { get; set; }
+        public string Name { get; set; }
 
         [Required]
         [EnumValidation(typeof(ProductStatus))]

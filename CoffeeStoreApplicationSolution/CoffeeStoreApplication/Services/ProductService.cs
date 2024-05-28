@@ -135,11 +135,11 @@ namespace CoffeeStoreApplication.Services
         /// <exception cref="NoSuchProductException">If the product is not found</exception>
         public async Task<ProductPriceDTO> UpdatePrice(ProductPriceDTO productPriceDTO)
         {
-            var product = await _repository.GetById(productPriceDTO.Id);
+            var product = (await _repository.GetAll()).FirstOrDefault(p => p.Name == productPriceDTO.Name);
             if (product == null)
             {
                 _logger.LogError("No product found");
-                throw new NoSuchProductException($"No product with ID {productPriceDTO.Id} exists");
+                throw new NoSuchProductException($"No product with Name {productPriceDTO.Name} exists");
             }
             
             product.Price = productPriceDTO.Price;
@@ -157,11 +157,11 @@ namespace CoffeeStoreApplication.Services
         /// <exception cref="NoSuchProductException">If the product is not found</exception>
         public async Task<ProductStatusDTO> UpdateProductStatus(ProductStatusDTO productStatusDTO)
         {
-            var product = await _repository.GetById(productStatusDTO.Id);
+            var product = (await _repository.GetAll()).FirstOrDefault(p=>p.Name == productStatusDTO.Name);
             if (product == null)
             {
                 _logger.LogError("No product found");
-                throw new NoSuchProductException($"No product with ID {productStatusDTO.Id} exists"); 
+                throw new NoSuchProductException($"No product with Name {productStatusDTO.Name} exists"); 
             }
 
             product.Status = (ProductStatus)Enum.Parse(typeof(ProductStatus), productStatusDTO.Status);
@@ -179,11 +179,11 @@ namespace CoffeeStoreApplication.Services
         /// <exception cref="NoSuchProductException">If the product is not found</exception>
         public async Task<ProductStockDTO> UpdateProductStock(ProductStockDTO productStockDTO)
         {
-            var product = await _repository.GetById(productStockDTO.Id);
+            var product = (await _repository.GetAll()).FirstOrDefault(p=> p.Name == productStockDTO.Name);
             if (product == null)
             {
                 _logger.LogError("No product found");
-                throw new NoSuchProductException($"No product with ID {productStockDTO.Id} exists");
+                throw new NoSuchProductException($"No product with Name {productStockDTO.Name} exists");
             }
 
             product.Stock = productStockDTO.Stock;
@@ -191,6 +191,25 @@ namespace CoffeeStoreApplication.Services
 
             productStockDTO = _mapper.Map<ProductStockDTO>(updatedProduct);
             return productStockDTO;
+        }
+
+        /// <summary>
+        /// Gets Product details using name
+        /// </summary>
+        /// <param name="name">Product name</param>
+        /// <returns>ProductDTO containing the product with the given name</returns>
+        /// <exception cref="NoSuchProductException">If the product is not found</exception>
+        public async Task<ProductDTO> GetByName(string name)
+        {
+            var product = (await _repository.GetAll()).FirstOrDefault(p=>p.Name ==  name);
+            if (product == null)
+            {
+                _logger.LogError("No product found");
+                throw new NoSuchProductException($"No product with name {name} exists");
+            }
+            ProductDTO productDTO = _mapper.Map<ProductDTO>(product);
+
+            return productDTO;
         }
     }
 }

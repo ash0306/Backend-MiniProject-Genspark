@@ -91,11 +91,11 @@ namespace CoffeeStoreApplication.Services
         /// <exception cref="NoSuchCustomerException">If no customer with the specified ID exists</exception>
         public async Task<LoyaltyPointsDTO> UpdateLoyaltyPoints(LoyaltyPointsDTO loyaltyPoints)
         {
-            Customer customer = await _repository.GetById(loyaltyPoints.CustomerId);
+            Customer customer = (await _repository.GetAll()).FirstOrDefault(c=>c.Email == loyaltyPoints.Email);
             if(customer == null)
             {
                 _logger.LogError("No customer found");
-                throw new NoSuchCustomerException($"No customer with ID {loyaltyPoints.CustomerId} exists");
+                throw new NoSuchCustomerException($"No customer with email {loyaltyPoints.Email} exists");
             }
 
             customer.LoyaltyPoints = (customer.LoyaltyPoints + loyaltyPoints.LoyaltyPoints);
@@ -103,7 +103,7 @@ namespace CoffeeStoreApplication.Services
             var updatedCustomer = await _repository.Update(customer);
             loyaltyPoints = new LoyaltyPointsDTO()
             {
-                CustomerId = updatedCustomer.Id,
+                Email = updatedCustomer.Email,
                 LoyaltyPoints = updatedCustomer.LoyaltyPoints
             };
 
