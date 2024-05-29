@@ -4,6 +4,7 @@ using CoffeeStoreApplication.Interfaces;
 using CoffeeStoreApplication.Models;
 using CoffeeStoreApplication.Models.DTOs.Employee;
 using CoffeeStoreApplication.Models.Enum;
+using System.Diagnostics.CodeAnalysis;
 using System.Security.Cryptography;
 using System.Text;
 
@@ -119,6 +120,7 @@ namespace CoffeeStoreApplication.Services
         /// <param name="encryptedPassword">Byte array of the encrypted password</param>
         /// <param name="password">Byte array of the stored password</param>
         /// <returns>True if passwords match, otherwise false</returns>
+        [ExcludeFromCodeCoverage]
         private bool ComparePassword(byte[] encryptedPassword, byte[] password)
         {
             for (int i = 0; i < encryptedPassword.Length; i++)

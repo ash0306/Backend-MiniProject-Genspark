@@ -229,7 +229,6 @@ namespace CoffeeStoreApplication.Services
             return productDTO;
         }
 
-
         public async Task<IEnumerable<IGrouping<string, CustomerProductDTO>>> GetProductMenu()
         {
             var products = (await _repository.GetAll())
