@@ -118,11 +118,11 @@ namespace CoffeeStoreApplication.Services
         /// <exception cref="NoSuchCustomerException">If no customer with the specified ID exists</exception>
         public async Task<UpdatePhoneDTO> UpdatePhone(UpdatePhoneDTO updatePhoneDTO)
         {
-            Customer customer = await _repository.GetById(updatePhoneDTO.CustomerId);
+            Customer customer = (await _repository.GetAll()).FirstOrDefault(c=>c.Email == updatePhoneDTO.Email);
             if (customer == null)
             {
                 _logger.LogError("No customer found");
-                throw new NoSuchCustomerException($"No customer with ID {updatePhoneDTO.CustomerId} exists");
+                throw new NoSuchCustomerException($"No customer with email {updatePhoneDTO.Email} exists");
             }
 
             customer.Phone = updatePhoneDTO.Phone;
@@ -130,7 +130,7 @@ namespace CoffeeStoreApplication.Services
             var updatedCustomer = await _repository.Update(customer);
             updatePhoneDTO = new UpdatePhoneDTO()
             {
-                CustomerId = updatedCustomer.Id,
+                Email = updatedCustomer.Email,
                 Phone = updatedCustomer.Phone
             };
 

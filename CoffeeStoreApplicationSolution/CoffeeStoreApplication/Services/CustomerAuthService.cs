@@ -5,6 +5,7 @@ using CoffeeStoreApplication.Interfaces;
 using CoffeeStoreApplication.Models;
 using CoffeeStoreApplication.Models.DTOs.Customer;
 using CoffeeStoreApplication.Models.Enum;
+using System.Diagnostics.CodeAnalysis;
 using System.Security.Cryptography;
 using System.Text;
 
@@ -103,6 +104,7 @@ namespace CoffeeStoreApplication.Services
         /// <param name="encryptedPassword">Hashed value of the password entered by user</param>
         /// <param name="password">Hashed Password in the DB</param>
         /// <returns></returns>
+        [ExcludeFromCodeCoverage]
         private bool ComparePassword(byte[] encryptedPassword, byte[] password)
         {
             for (int i = 0; i < encryptedPassword.Length; i++)

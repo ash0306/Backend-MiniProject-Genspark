@@ -13,7 +13,6 @@ namespace CoffeeStoreApplication.Interfaces
         public Task<ProductPriceDTO> UpdatePrice(ProductPriceDTO productPriceDTO);
         public Task<ProductStatusDTO> UpdateProductStatus(ProductStatusDTO productStatusDTO);
         public Task<ProductStockDTO> UpdateProductStock(ProductStockDTO productStockDTO);
-
-
+        public Task<IEnumerable<IGrouping<string, CustomerProductDTO>>> GetProductMenu();
     }
 }

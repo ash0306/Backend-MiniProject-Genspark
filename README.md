@@ -13,10 +13,11 @@ Coffee Shop Management System is a web-based backend application using ASP.NET C
   - [ER Diagram](#er-diagram)
   - [Table of Contents](#table-of-contents)
   - [Expected Features](#expected-features)
-    - [Customer Management](#user-management)
-    - [Employee Management](#student-management)
-    - [Order Management](#faculty-management)
-    - [Product Management](#course-management)
+    - [Customer Management](#customer-management)
+    - [Employee Management](#employee-management)
+    - [Product Management](#product-management)
+    - [Order Management](#order-management)
+    - [Administrative Functions](#administrative-functions)
   - [Technologies Used](#technologies-used)
   - [Project Structure](#project-structure)
   - [Getting Started](#getting-started)
@@ -25,15 +26,15 @@ Coffee Shop Management System is a web-based backend application using ASP.NET C
     - [Configuration](#configuration)
     - [Running the Application](#running-the-application)
   - [API Endpoints](#api-endpoints)
-    - [Auth Endpoints](#auth-endpoints)
-    - [Customer Endpoints](#student-endpoints)
-    - [Employee Endpoints](#faculty-endpoints)
-    - [Order Endpoints](#course-endpoints)
-    - [Product Endpoints](#exam-endpoints)
+    - [Customer Endpoints](#customer)
+    - [Customer Authentication Endpoints](#customer-authentication)
+    - [Employee Endpoints](#employee)
+    - [Employee Authentication Endpoints](#employee-authentication)
+    - [Order Endpoints](#order)
+    - [Product Endpoints](#product)
   - [Testing](#testing)
     - [Running Tests](#running-tests)
     - [Coverage Report](#coverage-report)
-  - [Relevant Repo](#relevant-repo)
 
 ## Expected Features
 
@@ -60,7 +61,7 @@ Coffee Shop Management System is a web-based backend application using ASP.NET C
 - **View Order Details**: Customers, Managers and admins can view details of Orders.
 - **Update Order Information**: Baristas can update Order information.
 
-### Administrative Functions (Admin User)
+### Administrative Functions
 - **View All Users**: Admin users can view a list of all registered users(Including customers, managers and baristas).
 - **Update Employee Details**: Admins can update employees' details such as salary status etc.,
 
@@ -193,6 +194,7 @@ Here are all the API endpoints from your Swagger documentation:
   - `PUT /api/product/updatePrice`: Update the price of a product.
   - `PUT /api/product/updateStatus`: Update the status of a product.
   - `PUT /api/product/updateStock`: Update the stock of a product.
+  - `PUT /api/product/menu`: Displays the available products by category for menu purposes.
 
 ## Testing
 - Unit tests are written using NUnit, Moq for mocking dependencies and In-Memeory datavase for storing data.

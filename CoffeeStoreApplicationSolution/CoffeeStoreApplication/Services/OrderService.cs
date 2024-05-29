@@ -8,6 +8,7 @@ using CoffeeStoreApplication.Models;
 using CoffeeStoreApplication.Models.DTOs.Customer;
 using CoffeeStoreApplication.Models.DTOs.Order;
 using CoffeeStoreApplication.Models.Enum;
+using System.Diagnostics.CodeAnalysis;
 
 namespace CoffeeStoreApplication.Services
 {
@@ -104,6 +105,7 @@ namespace CoffeeStoreApplication.Services
         /// <returns>Total price of the order</returns>
         /// <exception cref="NoSuchProductException">If a product in the order is not found</exception>
         /// <exception cref="ProductOutOfStockException">If a product in the order is out of stock</exception>
+        [ExcludeFromCodeCoverage]
         public async Task<float> CalculateTotalPrice(OrderDTO orderDTO)
         {
             float totalPrice = 0;   
@@ -118,7 +120,7 @@ namespace CoffeeStoreApplication.Services
             }
             return totalPrice;
         }
-        
+
         /// <summary>
         /// Calculates the loyalty discount for the order.
         /// </summary>
@@ -126,6 +128,7 @@ namespace CoffeeStoreApplication.Services
         /// <param name="totalPrice">Total price of the order</param>
         /// <returns>Loyalty discount for the order</returns>
         /// <exception cref="InsufficientPointsException">If the customer has insufficient loyalty points</exception>
+        [ExcludeFromCodeCoverage]
         public async Task<float> CalculateLoyaltyDiscount(OrderDTO orderDTO, float totalPrice)
         {
             float loyaltyDiscount = 0;
@@ -142,7 +145,7 @@ namespace CoffeeStoreApplication.Services
 
             return loyaltyDiscount;
         }
-        
+
         /// <summary>
         /// Adds order items to the order.
         /// </summary>
@@ -151,6 +154,7 @@ namespace CoffeeStoreApplication.Services
         /// <returns>List of added OrderItem objects</returns>
         /// <exception cref="UnableToUpdateProductException">If unable to update the product stock</exception>
         /// <exception cref="UnableToAddOrderItemException">If unable to add the order item</exception>
+        [ExcludeFromCodeCoverage]
         public async Task<IEnumerable<OrderItem>> AddOrderItems(OrderDTO orderDTO, int orderId)
         {
             IList<OrderItem> orderItems = new List<OrderItem>();

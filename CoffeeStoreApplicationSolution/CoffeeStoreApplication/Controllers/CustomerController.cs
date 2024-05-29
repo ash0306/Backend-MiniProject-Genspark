@@ -20,7 +20,7 @@ namespace CoffeeStoreApplication.Controllers
             _logger = logger;
         }
 
-        [Authorize(Roles = "Barista")]
+        [Authorize(Roles = "Barista,Manager")]
         [HttpPut("updateLoyaltyPoints")]
         [ProducesResponseType(typeof(LoyaltyPointsDTO), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status304NotModified)]
@@ -56,7 +56,7 @@ namespace CoffeeStoreApplication.Controllers
             }
         }
 
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin,Manager")]
         [HttpGet("getAll")]
         [ProducesResponseType(typeof(CustomerDTO), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status404NotFound)]
@@ -74,7 +74,7 @@ namespace CoffeeStoreApplication.Controllers
             }
         }
 
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin,Manager")]
         [HttpGet("getById")]
         [ProducesResponseType(typeof(CustomerDTO), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status404NotFound)]
@@ -92,7 +92,7 @@ namespace CoffeeStoreApplication.Controllers
             }
         }
 
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin,Manager")]
         [HttpGet("getByEmail")]
         [ProducesResponseType(typeof(CustomerDTO), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status404NotFound)]

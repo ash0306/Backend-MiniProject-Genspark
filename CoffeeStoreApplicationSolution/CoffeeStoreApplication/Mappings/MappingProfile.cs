@@ -42,6 +42,7 @@ namespace CoffeeStoreApplication.Mappings
             CreateMap<Product, ProductPriceDTO>().ReverseMap();
             CreateMap<Product, ProductStatusDTO>().ReverseMap();
             CreateMap<Product, ProductStockDTO>().ReverseMap();
+            CreateMap<Product, CustomerProductDTO>().ReverseMap();
             #endregion
 
             #region Order Mappings

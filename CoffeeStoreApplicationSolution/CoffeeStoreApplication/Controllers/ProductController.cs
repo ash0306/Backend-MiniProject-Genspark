@@ -181,5 +181,23 @@ namespace CoffeeStoreApplication.Controllers
                 return NotFound(new ErrorModel(409, ex.Message));
             }
         }
+
+        [Authorize(Roles = "Customer,Manager,Barista")]
+        [HttpGet("menu")]
+        [ProducesResponseType(typeof(IEnumerable<IGrouping<string, CustomerProductDTO>>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status404NotFound)]
+        public async Task<ActionResult<IEnumerable<IGrouping<string, CustomerProductDTO>>>> GetMenu()
+        {
+            try
+            {
+                var products = await _productService.GetProductMenu();
+                return Ok(products);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message, ex);
+                return NotFound(new ErrorModel(404, ex.Message));
+            }
+        }
     }
 }
