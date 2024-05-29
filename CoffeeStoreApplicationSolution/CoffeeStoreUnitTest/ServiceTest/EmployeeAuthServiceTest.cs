@@ -16,6 +16,7 @@ using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
 
 namespace CoffeeStoreUnitTest.ServiceTest
 {
@@ -26,6 +27,7 @@ namespace CoffeeStoreUnitTest.ServiceTest
         IRepository<int, Employee> repository;
         IMapper _mapper;
         MapperConfiguration _config;
+        Mock<ILogger<EmployeeAuthService>> _logger;
 
         [SetUp]
         public async Task Setup()
@@ -37,6 +39,7 @@ namespace CoffeeStoreUnitTest.ServiceTest
 
             _config = new MapperConfiguration(cfg => cfg.AddMaps(new[] { "CoffeeStoreApplication" }));
             _mapper = _config.CreateMapper();
+            _logger = new Mock<ILogger<EmployeeAuthService>>();
 
             Mock<IConfigurationSection> configurationJWTSection = new Mock<IConfigurationSection>();
             configurationJWTSection.Setup(x => x.Value).Returns("Lk3xG9pVqRmZtRwYk7oPnTjWrAsDfGhUi8yBnJkLm9zXx2cVnMl0pOu1tZr4eDcFvGbHnJm5sR3Zn9JyQaPx7oWtUgXhIvDcFeGbVkLmOpNjRbEaUcPy8x6y0Zq4w1u3t5r7i9w2");
@@ -80,7 +83,7 @@ namespace CoffeeStoreUnitTest.ServiceTest
         [Test, Order(1)]
         public async Task LoginSuccessTest()
         {
-            IAuthLoginService<EmployeeLoginReturnDTO, EmployeeLoginDTO> employeeLoginService = new EmployeeAuthService(repository, _tokenService, _mapper);
+            IAuthLoginService<EmployeeLoginReturnDTO, EmployeeLoginDTO> employeeLoginService = new EmployeeAuthService(repository, _tokenService, _mapper, _logger.Object);
 
             EmployeeLoginDTO employeeLoginDTO = new EmployeeLoginDTO
             {
@@ -99,7 +102,7 @@ namespace CoffeeStoreUnitTest.ServiceTest
         public void LoginFailureTest()
         {
 
-            IAuthLoginService<EmployeeLoginReturnDTO, EmployeeLoginDTO> employeeLoginService = new EmployeeAuthService(repository, _tokenService, _mapper);
+            IAuthLoginService<EmployeeLoginReturnDTO, EmployeeLoginDTO> employeeLoginService = new EmployeeAuthService(repository, _tokenService, _mapper, _logger.Object);
 
             EmployeeLoginDTO employeeLoginDTO = new EmployeeLoginDTO
             {
@@ -115,7 +118,7 @@ namespace CoffeeStoreUnitTest.ServiceTest
         public async Task RegisterSuccessTest()
         {
 
-            IAuthRegisterService<EmployeeRegisterReturnDTO, EmployeeRegisterDTO> employeeResgiterService = new EmployeeAuthService(repository, _tokenService, _mapper);
+            IAuthRegisterService<EmployeeRegisterReturnDTO, EmployeeRegisterDTO> employeeResgiterService = new EmployeeAuthService(repository, _tokenService, _mapper, _logger.Object);
 
             EmployeeRegisterDTO employeeRegisterDTO = new EmployeeRegisterDTO
             {
@@ -137,7 +140,7 @@ namespace CoffeeStoreUnitTest.ServiceTest
         public void RegisterFailureTest()
         {
 
-            IAuthRegisterService<EmployeeRegisterReturnDTO, EmployeeRegisterDTO> employeeResgiterService = new EmployeeAuthService(repository, _tokenService, _mapper);
+            IAuthRegisterService<EmployeeRegisterReturnDTO, EmployeeRegisterDTO> employeeResgiterService = new EmployeeAuthService(repository, _tokenService, _mapper, _logger.Object);
 
             EmployeeRegisterDTO employeeRegisterDTO = new EmployeeRegisterDTO
             {

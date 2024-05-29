@@ -12,6 +12,8 @@ using CoffeeStoreApplication.Models.Enum;
 using CoffeeStoreApplication.Repositories;
 using CoffeeStoreApplication.Services;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
+using Moq;
 using System.Security.Cryptography;
 using System.Text;
 
@@ -26,8 +28,13 @@ namespace CoffeeStoreUnitTest.ServiceTest
         IRepository<int, OrderItem> orderItemRepository;
         IRepository<int, CustomerOrder> customerOrderRepository;
         IOrderService orderService;
+        IOrderItemService orderItemService;
+        ICustomerService customerService;
         IMapper mapper;
         MapperConfiguration mapperConfig;
+        Mock<ILogger<OrderService>> logger;
+        Mock<ILogger<CustomerService>> customerLogger;
+        Mock<ILogger<OrderItemService>> orderItemLogger;
 
         [SetUp]
         public async Task Setup()
@@ -37,14 +44,19 @@ namespace CoffeeStoreUnitTest.ServiceTest
 
             mapperConfig = new MapperConfiguration(cfg => cfg.AddMaps(new[] { "CoffeeStoreApplication" }));
             mapper = mapperConfig.CreateMapper();
+            logger = new Mock<ILogger<OrderService>>();
+            orderItemLogger = new Mock<ILogger<OrderItemService>>();
+            customerLogger = new Mock<ILogger<CustomerService>>();
 
             orderRepository = new OrderRepository(context);
             productRepository = new ProductRepository(context);
             customerRepository = new CustomerRepository(context);
             orderItemRepository = new OrderItemRepository(context);
             customerOrderRepository = new CustomerOrderRepository(context);
+            orderItemService = new OrderItemService(orderItemRepository, mapper, productRepository, orderItemLogger.Object);
+            customerService = new CustomerService(customerRepository, mapper, customerLogger.Object);
 
-            orderService = new OrderService(orderRepository, mapper, productRepository, customerRepository, orderItemRepository, customerOrderRepository);
+            orderService = new OrderService(orderRepository, mapper, productRepository, customerRepository, orderItemRepository, customerOrderRepository, logger.Object, orderItemService, customerService);
 
             #region SeedDatabase
             var hmac = new HMACSHA512();

@@ -27,6 +27,7 @@ namespace CoffeeStoreUnitTest.ServiceTest
         IRepository<int, Customer> repository;
         IMapper _mapper;
         MapperConfiguration _config;
+        Mock<ILogger<CustomerAuthService>> _logger;
 
         [SetUp]
         public async Task Setup()
@@ -46,6 +47,7 @@ namespace CoffeeStoreUnitTest.ServiceTest
             Mock<IConfiguration> mockConfig = new Mock<IConfiguration>();
             mockConfig.Setup(x => x.GetSection("TokenKey")).Returns(congigTokenSection.Object);
             _tokenService = new TokenService(mockConfig.Object);
+            _logger = new Mock<ILogger<CustomerAuthService>>();
 
 
             #region SeedDatabase
@@ -80,7 +82,7 @@ namespace CoffeeStoreUnitTest.ServiceTest
         [Test, Order(1)]
         public async Task LoginSuccessTest()
         {
-            IAuthLoginService<CustomerLoginReturnDTO, CustomerLoginDTO> CustomerLoginService = new CustomerAuthService(repository, _tokenService, _mapper);
+            IAuthLoginService<CustomerLoginReturnDTO, CustomerLoginDTO> CustomerLoginService = new CustomerAuthService(repository, _tokenService, _mapper, _logger.Object);
 
             CustomerLoginDTO CustomerLoginDTO = new CustomerLoginDTO
             {
@@ -99,7 +101,7 @@ namespace CoffeeStoreUnitTest.ServiceTest
         public void LoginFailureTest()
         {
 
-            IAuthLoginService<CustomerLoginReturnDTO, CustomerLoginDTO> CustomerLoginService = new CustomerAuthService(repository, _tokenService, _mapper);
+            IAuthLoginService<CustomerLoginReturnDTO, CustomerLoginDTO> CustomerLoginService = new CustomerAuthService(repository, _tokenService, _mapper, _logger.Object);
 
             CustomerLoginDTO CustomerLoginDTO = new CustomerLoginDTO
             {
@@ -115,7 +117,7 @@ namespace CoffeeStoreUnitTest.ServiceTest
         public async Task RegisterSuccessTest()
         {
 
-            IAuthRegisterService<CustomerRegisterReturnDTO, CustomerRegisterDTO> CustomerResgiterService = new CustomerAuthService(repository, _tokenService, _mapper);
+            IAuthRegisterService<CustomerRegisterReturnDTO, CustomerRegisterDTO> CustomerResgiterService = new CustomerAuthService(repository, _tokenService, _mapper, _logger.Object);
 
             CustomerRegisterDTO CustomerRegisterDTO = new CustomerRegisterDTO
             {
@@ -137,7 +139,7 @@ namespace CoffeeStoreUnitTest.ServiceTest
         public void RegisterFailureTest()
         {
 
-            IAuthRegisterService<CustomerRegisterReturnDTO, CustomerRegisterDTO> CustomerResgiterService = new CustomerAuthService(repository, _tokenService, _mapper);
+            IAuthRegisterService<CustomerRegisterReturnDTO, CustomerRegisterDTO> CustomerResgiterService = new CustomerAuthService(repository, _tokenService, _mapper, _logger.Object);
 
             CustomerRegisterDTO CustomerRegisterDTO = new CustomerRegisterDTO
             {

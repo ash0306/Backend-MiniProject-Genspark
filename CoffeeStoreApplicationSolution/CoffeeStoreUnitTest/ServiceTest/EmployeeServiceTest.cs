@@ -8,6 +8,8 @@ using CoffeeStoreApplication.Models.Enum;
 using CoffeeStoreApplication.Repositories;
 using CoffeeStoreApplication.Services;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
+using Moq;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
@@ -25,6 +27,7 @@ namespace CoffeeStoreUnitTest.ServiceTest
         IEmployeeService employeeService;
         IMapper mapper;
         MapperConfiguration mapperConfig;
+        Mock<ILogger<EmployeeService>> logger;
 
         [SetUp]
         public async Task Setup()
@@ -34,9 +37,10 @@ namespace CoffeeStoreUnitTest.ServiceTest
 
             mapperConfig = new MapperConfiguration(cfg => cfg.AddMaps(new[] { "CoffeeStoreApplication" }));
             mapper = mapperConfig.CreateMapper();
+            logger = new Mock<ILogger<EmployeeService>>();
 
             repository = new EmployeeRepository(context);
-            employeeService = new EmployeeService(repository, mapper);
+            employeeService = new EmployeeService(repository, mapper, logger.Object);
 
             #region SeedDatabase
             var hmac = new HMACSHA512();

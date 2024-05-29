@@ -4,6 +4,7 @@ using CoffeeStoreApplication.Interfaces;
 using CoffeeStoreApplication.Models;
 using CoffeeStoreApplication.Models.DTOs.OrderItems;
 using CoffeeStoreApplication.Services;
+using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
 using System.Collections.Generic;
@@ -18,6 +19,7 @@ namespace CoffeeStoreUnitTest.ServiceTest
         private Mock<IRepository<int, Product>> _mockProductRepository;
         private IMapper _mapper;
         private OrderItemService _orderItemService;
+        private Mock<ILogger<OrderItemService>> _logger;
 
         [SetUp]
         public void Setup()
@@ -28,11 +30,12 @@ namespace CoffeeStoreUnitTest.ServiceTest
             var config = new MapperConfiguration(cfg => cfg.AddMaps(new[] { "CoffeeStoreApplication" }));
 
             _mapper = config.CreateMapper();
+            _logger = new Mock<ILogger<OrderItemService>>();
 
             _orderItemService = new OrderItemService(
                 _mockOrderItemRepository.Object,
                 _mapper,
-                _mockProductRepository.Object);
+                _mockProductRepository.Object, _logger.Object);
         }
 
         [Test]

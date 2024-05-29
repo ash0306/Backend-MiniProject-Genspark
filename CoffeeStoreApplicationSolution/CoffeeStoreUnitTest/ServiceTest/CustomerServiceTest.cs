@@ -7,6 +7,8 @@ using CoffeeStoreApplication.Models.DTOs.Customer;
 using CoffeeStoreApplication.Repositories;
 using CoffeeStoreApplication.Services;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
+using Moq;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
@@ -20,6 +22,7 @@ namespace CoffeeStoreUnitTest.ServiceTest
         ICustomerService customerService;
         IMapper mapper;
         MapperConfiguration mapperConfig;
+        Mock<ILogger<CustomerService>> logger;
 
         [SetUp]
         public async Task Setup()
@@ -29,9 +32,10 @@ namespace CoffeeStoreUnitTest.ServiceTest
 
             mapperConfig = new MapperConfiguration(cfg => cfg.AddMaps(new[] {"CoffeeStoreApplication"}));
             mapper = mapperConfig.CreateMapper();
+            logger = new Mock<ILogger<CustomerService>>();
 
             repository = new CustomerRepository(context);
-            customerService = new CustomerService(repository, mapper);
+            customerService = new CustomerService(repository, mapper, logger.Object);
 
             #region SeedDatabase
             var hmac = new HMACSHA512();
@@ -100,18 +104,18 @@ namespace CoffeeStoreUnitTest.ServiceTest
         public async Task UpdateLoyaltyPointsSuccessTest()
         {
             LoyaltyPointsDTO dto = new LoyaltyPointsDTO() { 
-                CustomerId = 2,
+                Email = "test2@gamil.com",
                 LoyaltyPoints = 20
             };
             var result = await customerService.UpdateLoyaltyPoints(dto);
-            Assert.AreEqual(result.CustomerId, dto.CustomerId);
+            Assert.AreEqual(result.Email, dto.Email);
         }
 
         [Test, Order(7)]
         public async Task UpdateLoyaltyPointsFailureTest()
         { 
             LoyaltyPointsDTO dto = new LoyaltyPointsDTO() { 
-                CustomerId = 99,
+                Email = "hello@example.com",
                 LoyaltyPoints = 20
             };
             Assert.ThrowsAsync<NoSuchCustomerException>(async () => await customerService.UpdateLoyaltyPoints(dto));

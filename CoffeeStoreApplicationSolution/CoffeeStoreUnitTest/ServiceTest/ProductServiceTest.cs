@@ -8,6 +8,8 @@ using CoffeeStoreApplication.Models.Enum;
 using CoffeeStoreApplication.Repositories;
 using CoffeeStoreApplication.Services;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
+using Moq;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
@@ -23,6 +25,7 @@ namespace CoffeeStoreUnitTest.ServiceTest
         private IProductService _productService;
         private IMapper _mapper;
         private MapperConfiguration _mapperConfig;
+        private Mock<ILogger<ProductService>> _logger;
 
         [SetUp]
         public async Task Setup()
@@ -32,9 +35,10 @@ namespace CoffeeStoreUnitTest.ServiceTest
 
             _mapperConfig = new MapperConfiguration(cfg => cfg.AddMaps(new[] { "CoffeeStoreApplication" }));
             _mapper = _mapperConfig.CreateMapper();
+            _logger = new Mock<ILogger<ProductService>>();
 
             _repository = new ProductRepository(_context);
-            _productService = new ProductService(_repository, _mapper);
+            _productService = new ProductService(_repository, _mapper, _logger.Object);
 
             var products = new List<Product>
             {
@@ -57,7 +61,7 @@ namespace CoffeeStoreUnitTest.ServiceTest
         [Test, Order(2)]
         public async Task UpdateProductStock_Success()
         {
-            var productStockDTO = new ProductStockDTO { Id = 1, Stock = 15 };
+            var productStockDTO = new ProductStockDTO { Name = "Espresso", Stock = 15 };
             var result = await _productService.UpdateProductStock(productStockDTO);
 
             Assert.IsNotNull(result);
@@ -95,24 +99,24 @@ namespace CoffeeStoreUnitTest.ServiceTest
         [Test, Order(7)]
         public async Task UpdatePrice_Success()
         {
-            var productPriceDTO = new ProductPriceDTO { Id = 1, Price = 3.0f };
+            var productPriceDTO = new ProductPriceDTO { Name = "Espresso", Price = 300 };
             var result = await _productService.UpdatePrice(productPriceDTO);
 
             Assert.IsNotNull(result);
-            Assert.AreEqual(3.0f, result.Price);
+            Assert.AreEqual(300, result.Price);
         }
 
         [Test, Order(8)]
         public void UpdatePrice_Failure()
         {
-            var productPriceDTO = new ProductPriceDTO { Id = 99, Price = 3.0f };
+            var productPriceDTO = new ProductPriceDTO { Name = "hello", Price = 300 };
             Assert.ThrowsAsync<NoSuchProductException>(async () => await _productService.UpdatePrice(productPriceDTO));
         }
 
         [Test, Order(9)]
         public async Task UpdateProductStatus_Success()
         {
-            var productStatusDTO = new ProductStatusDTO { Id = 1, Status = "Unavailable" };
+            var productStatusDTO = new ProductStatusDTO { Name = "Espresso", Status = "Unavailable" };
             var result = await _productService.UpdateProductStatus(productStatusDTO);
 
             Assert.IsNotNull(result);
@@ -122,18 +126,39 @@ namespace CoffeeStoreUnitTest.ServiceTest
         [Test, Order(10)]
         public void UpdateProductStatus_Failure()
         {
-            var productStatusDTO = new ProductStatusDTO { Id = 99, Status = "Unavailable" };
+            var productStatusDTO = new ProductStatusDTO { Name = "hello", Status = "Unavailable" };
             Assert.ThrowsAsync<NoSuchProductException>(async () => await _productService.UpdateProductStatus(productStatusDTO));
         }
 
         [Test, Order(11)]
         public void UpdateProductStock_Failure()
         {
-            var productStockDTO = new ProductStockDTO { Id = 99, Stock = 15 };
+            var productStockDTO = new ProductStockDTO {Name = "hello", Stock = 30 };
             Assert.ThrowsAsync<NoSuchProductException>(async () => await _productService.UpdateProductStock(productStockDTO));
         }
 
+
         [Test, Order(12)]
+        public async Task GetAllAvailableProducts_Success()
+        {
+            var result = await _productService.GetAllAvailableProducts();
+            Assert.IsNotNull(result);
+        }
+
+        [Test, Order(13)]
+        public async Task GetByName_Success()
+        {
+            var result = await _productService.GetByName("Latte");
+            Assert.AreEqual(result.Name, "Latte");
+        }
+
+        [Test, Order(14)]
+        public async Task GetByName_Failure()
+        {
+            Assert.ThrowsAsync<NoSuchProductException>(async () => await _productService.GetByName("hello"));
+        }
+
+        [Test, Order(15)]
         public void GetAllProducts_Failure()
         {
             // Clear the database
@@ -144,6 +169,18 @@ namespace CoffeeStoreUnitTest.ServiceTest
             _context.SaveChanges();
 
             Assert.ThrowsAsync<NoProductsFoundException>(async () => await _productService.GetAllProducts());
+        }
+
+
+        [Test, Order(16)]
+        public async Task GetAllAvailableProducts_Failure()
+        {
+            var productStatusDTO = new ProductStatusDTO { Name = "Latte", Status = "Unavailable" };
+            await _productService.UpdateProductStatus(productStatusDTO);
+            var productStatusDTO1 = new ProductStatusDTO { Name = "Espresso", Status = "Unavailable" };
+            await _productService.UpdateProductStatus(productStatusDTO1);
+            var result = await _productService.GetAllAvailableProducts();
+            Assert.AreEqual(0, result.Count());
         }
     }
 }
