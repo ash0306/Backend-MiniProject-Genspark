@@ -5,7 +5,8 @@ namespace CoffeeStoreApplication.Models.DTOs.Customer
     public class UpdatePhoneDTO
     {
         [Required]
-        public int CustomerId { get; set; }
+        [EmailAddress]
+        public string Email { get; set; }
 
         [Required]
         [MinLength(10)]
