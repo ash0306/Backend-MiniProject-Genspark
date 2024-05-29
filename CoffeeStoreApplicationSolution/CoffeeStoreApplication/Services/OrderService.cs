@@ -5,6 +5,7 @@ using CoffeeStoreApplication.Exceptions.OrderItemExceptions;
 using CoffeeStoreApplication.Exceptions.ProductExceptions;
 using CoffeeStoreApplication.Interfaces;
 using CoffeeStoreApplication.Models;
+using CoffeeStoreApplication.Models.DTOs.Customer;
 using CoffeeStoreApplication.Models.DTOs.Order;
 using CoffeeStoreApplication.Models.Enum;
 
@@ -18,13 +19,15 @@ namespace CoffeeStoreApplication.Services
         private readonly IRepository<int, Customer> _customerRepository;
         private readonly IRepository<int, OrderItem> _orderItemRepository;
         private readonly IRepository<int, CustomerOrder> _customerOrderRepository;
+        private readonly ILogger<OrderService> _logger;
+        private readonly IOrderItemService _orderItemService;
+        private readonly ICustomerService _customerService;
 
-        public OrderService(IRepository<int, Order> orderRepo, 
-            IMapper mapper, 
-            IRepository<int, Product> productRepo, 
-            IRepository<int,Customer> customerRepo, 
-            IRepository<int, OrderItem> orderItemRepo,
-            IRepository<int,CustomerOrder> customerOrderRepo)
+        public OrderService(IRepository<int, Order> orderRepo, IMapper mapper, 
+            IRepository<int, Product> productRepo, IRepository<int,Customer> customerRepo, 
+            IRepository<int, OrderItem> orderItemRepo,IRepository<int,CustomerOrder> customerOrderRepo,
+            ILogger<OrderService> logger, IOrderItemService orderItemService,
+            ICustomerService customerService)
         {
             _orderRepository = orderRepo;
             _mapper = mapper;
@@ -32,6 +35,9 @@ namespace CoffeeStoreApplication.Services
             _customerRepository = customerRepo;
             _orderItemRepository = orderItemRepo;
             _customerOrderRepository = customerOrderRepo;
+            _logger = logger;
+            _orderItemService = orderItemService;
+            _customerService = customerService;
         }
 
         /// <summary>
@@ -47,9 +53,10 @@ namespace CoffeeStoreApplication.Services
             float loyaltyDiscount = 0;
             IList<OrderItem> orderItems = new List<OrderItem>();
 
-            if(orderDTO.OrderItems.Count() == 0)
+            if(orderDTO.OrderItems.Count() == 0) {
+                _logger.LogError("No items in order");
                 throw new NoItemsFoundException("This order has no items!! Add atleast 1 item to place an order.");
-
+            }
             totalPrice = await CalculateTotalPrice(orderDTO);
 
             if(orderDTO.UseLoyaltyPoints)
@@ -59,9 +66,9 @@ namespace CoffeeStoreApplication.Services
             }
             else
             {
-                var customer = (await _customerRepository.GetAll()).FirstOrDefault(c => c.Id == orderDTO.CustomerId);
-                customer.LoyaltyPoints += (int)(totalPrice / 10);
-                await _customerRepository.Update(customer);
+                var customer = await _customerService.GetCustomerById(orderDTO.CustomerId);
+                var loyaltyPoints = (int)(totalPrice / 10);
+                await _customerService.UpdateLoyaltyPoints(new LoyaltyPointsDTO() { Email =  customer.Email, LoyaltyPoints = loyaltyPoints});
             }
 
             order = new Order()
@@ -161,6 +168,10 @@ namespace CoffeeStoreApplication.Services
                 orderItems.Add(orderItem);
 
                 product.Stock -= 1;
+                if(product.Stock <= 0)
+                {
+                    product.Status = ProductStatus.Unavailable;
+                }
                 var updatedProduct = await _productRepository.Update(product);
                 if(updatedProduct == null)
                 {
@@ -188,6 +199,7 @@ namespace CoffeeStoreApplication.Services
             var order = await _orderRepository.GetById(orderId);
             if(order == null)
             {
+                _logger.LogError("No order found");
                 throw new NoSuchOrderException($"No order found with ID {orderId}");
             }
 
@@ -199,16 +211,15 @@ namespace CoffeeStoreApplication.Services
                 throw new UnableToCancelOrderException("Your order is already being prepared so cannot cancel order");
             }
             var items = (await _orderItemRepository.GetAll()).Where(oi => oi.OrderId == order.Id);
-            //foreach (var item in order.OrderItems)
-            //{
-            //    var product = await _productRepository.GetById(item.ProductId);
-            //    product.Stock += 1;
-            //    await _productRepository.Update(product);
-            //}
+            
             foreach (var item in items)
             {
                 var product = await _productRepository.GetById(item.ProductId);
                 product.Stock += 1;
+                if(product.Stock == 1)
+                {
+                    product.Status = ProductStatus.Available;
+                }
                 await _productRepository.Update(product);
             }
             order.Status = OrderStatus.Cancelled;
@@ -228,13 +239,18 @@ namespace CoffeeStoreApplication.Services
         {
             var orders = (await _orderRepository.GetAll()).Where(o=> o.Status != OrderStatus.Completed && o.Status != OrderStatus.Cancelled);
 
-            if(orders.Count() == 0)
+            if (orders.Count() == 0)
+            {
+                _logger.LogError("No orders found");
                 throw new NoSuchOrderException("No pending orders found.");
-
+            }
             IList<OrderReturnDTO> orderReturnDTOs = new List<OrderReturnDTO>();
             foreach (var item in orders)
             {
-                orderReturnDTOs.Add(_mapper.Map<OrderReturnDTO>(item));
+                var orderitems = (await _orderItemService.GetOrderItemsByOrderId(item.Id)).ToList();
+                OrderReturnDTO returnDTO = _mapper.Map<OrderReturnDTO>(item);
+                returnDTO.OrderItems = orderitems;
+                orderReturnDTOs.Add(returnDTO);
             }
             return orderReturnDTOs;
         }
@@ -252,6 +268,7 @@ namespace CoffeeStoreApplication.Services
             var order = await _orderRepository.GetById(orderStatusDTO.OrderId);
             if (order == null)
             {
+                _logger.LogError("No order found");
                 throw new NoSuchOrderException($"No order found with ID {orderStatusDTO.OrderId}");
             }
             order.Status = (OrderStatus)Enum.Parse(typeof(OrderStatus), orderStatusDTO.Status);

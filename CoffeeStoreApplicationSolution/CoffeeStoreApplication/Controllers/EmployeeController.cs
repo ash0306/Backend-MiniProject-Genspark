@@ -110,5 +110,59 @@ namespace CoffeeStoreApplication.Controllers
                 return NotFound(new ErrorModel(404, ex.Message));
             }
         }
+
+        [Authorize(Roles = "Admin")]
+        [HttpGet("getAllAdmins")]
+        [ProducesResponseType(typeof(IEnumerable<EmployeeDTO>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status404NotFound)]
+        public async Task<ActionResult<IEnumerable<EmployeeDTO>>> GetAllAdmins()
+        {
+            try
+            {
+                var employees = await _employeeService.GetAllAdmins();
+                return Ok(employees.ToList());
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message, ex);
+                return NotFound(new ErrorModel(404, ex.Message));
+            }
+        }
+
+        [Authorize(Roles = "Admin,Managers")]
+        [HttpGet("getAllManagers")]
+        [ProducesResponseType(typeof(IEnumerable<EmployeeDTO>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status404NotFound)]
+        public async Task<ActionResult<IEnumerable<EmployeeDTO>>> GetAllManagers()
+        {
+            try
+            {
+                var employees = await _employeeService.GetAllManagers();
+                return Ok(employees.ToList());
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message, ex);
+                return NotFound(new ErrorModel(404, ex.Message));
+            }
+        }
+
+        [Authorize(Roles = "Admin,Manager")]
+        [HttpGet("getAllBaristas")]
+        [ProducesResponseType(typeof(IEnumerable<EmployeeDTO>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status404NotFound)]
+        public async Task<ActionResult<IEnumerable<EmployeeDTO>>> GetAllBaristas()
+        {
+            try
+            {
+                var employees = await _employeeService.GetAllBaristas();
+                return Ok(employees.ToList());
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message, ex);
+                return NotFound(new ErrorModel(404, ex.Message));
+            }
+        }
     }
 }

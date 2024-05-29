@@ -12,11 +12,13 @@ namespace CoffeeStoreApplication.Services
     {
         private readonly IRepository<int, Customer> _repository;
         private readonly IMapper _mapper;
+        private readonly ILogger<CustomerService> _logger;
 
-        public CustomerService(IRepository<int, Customer> repository, IMapper mapper)
+        public CustomerService(IRepository<int, Customer> repository, IMapper mapper, ILogger<CustomerService> logger)
         {
             _repository = repository;
             _mapper = mapper;
+            _logger = logger;
         }
 
         /// <summary>
@@ -30,6 +32,7 @@ namespace CoffeeStoreApplication.Services
 
             if (customers.Count() == 0)
             {
+                _logger.LogError("No customers found");
                 throw new NoCustomersFoundException("No customers found");
             }
 
@@ -53,6 +56,7 @@ namespace CoffeeStoreApplication.Services
             var customer = (await _repository.GetAll()).FirstOrDefault(c => c.Email == email);
             if(customer == null)
             {
+                _logger.LogError("No customers found");
                 throw new NoSuchCustomerException($"No customer with email {email} found");
             }
             CustomerDTO customerDTO = _mapper.Map<CustomerDTO>(customer);
@@ -71,6 +75,7 @@ namespace CoffeeStoreApplication.Services
 
             if (customer == null)
             {
+                _logger.LogError("No customers found");
                 throw new NoSuchCustomerException($"No customer with ID {id} exists");
             }
 
@@ -86,10 +91,11 @@ namespace CoffeeStoreApplication.Services
         /// <exception cref="NoSuchCustomerException">If no customer with the specified ID exists</exception>
         public async Task<LoyaltyPointsDTO> UpdateLoyaltyPoints(LoyaltyPointsDTO loyaltyPoints)
         {
-            Customer customer = await _repository.GetById(loyaltyPoints.CustomerId);
+            Customer customer = (await _repository.GetAll()).FirstOrDefault(c=>c.Email == loyaltyPoints.Email);
             if(customer == null)
             {
-                throw new NoSuchCustomerException($"No customer with ID {loyaltyPoints.CustomerId} exists");
+                _logger.LogError("No customer found");
+                throw new NoSuchCustomerException($"No customer with email {loyaltyPoints.Email} exists");
             }
 
             customer.LoyaltyPoints = (customer.LoyaltyPoints + loyaltyPoints.LoyaltyPoints);
@@ -97,7 +103,7 @@ namespace CoffeeStoreApplication.Services
             var updatedCustomer = await _repository.Update(customer);
             loyaltyPoints = new LoyaltyPointsDTO()
             {
-                CustomerId = updatedCustomer.Id,
+                Email = updatedCustomer.Email,
                 LoyaltyPoints = updatedCustomer.LoyaltyPoints
             };
 
@@ -115,6 +121,7 @@ namespace CoffeeStoreApplication.Services
             Customer customer = await _repository.GetById(updatePhoneDTO.CustomerId);
             if (customer == null)
             {
+                _logger.LogError("No customer found");
                 throw new NoSuchCustomerException($"No customer with ID {updatePhoneDTO.CustomerId} exists");
             }
 

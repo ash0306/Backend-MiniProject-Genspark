@@ -15,12 +15,14 @@ namespace CoffeeStoreApplication.Services
         private readonly IRepository<int, Customer> _repository;
         private readonly ITokenService _tokenService;
         private readonly IMapper _mapper;
+        private readonly ILogger<CustomerAuthService> _logger;
 
-        public CustomerAuthService(IRepository<int, Customer> repository, ITokenService tokenService, IMapper mapper)
+        public CustomerAuthService(IRepository<int, Customer> repository, ITokenService tokenService, IMapper mapper, ILogger<CustomerAuthService> logger)
         {
             _repository = repository;
             _tokenService = tokenService;
             _mapper = mapper;
+            _logger = logger;
         }
 
         /// <summary>
@@ -39,6 +41,7 @@ namespace CoffeeStoreApplication.Services
                 var alreadyPresent = (await _repository.GetAll()).FirstOrDefault(c=>c.Email == registerDTO.Email);
                 if(alreadyPresent != null)
                 {
+                    _logger.LogCritical("User with Email already exists");
                     throw new UserAlreadyExistsException($"User with this Email already exists");
                 }
 
@@ -56,6 +59,7 @@ namespace CoffeeStoreApplication.Services
             }
             catch
             {
+                _logger.LogCritical("Could not Register");
                 throw new UnableToRegisterException($"Unable to register at the moment");
             }
         }
@@ -71,6 +75,7 @@ namespace CoffeeStoreApplication.Services
             Customer customer = (await _repository.GetAll()).FirstOrDefault(c => c.Email == loginDTO.Email);
             if(customer == null)
             {
+                _logger.LogCritical("Could not Login");
                 throw new UnauthorizedUserException("Invalid email or password");
             }
 
@@ -88,7 +93,7 @@ namespace CoffeeStoreApplication.Services
                 };
                 return returnDTO;
             }
-
+            _logger.LogCritical("Could not Login");
             throw new UnauthorizedUserException("Invalid email or password");
         }
 

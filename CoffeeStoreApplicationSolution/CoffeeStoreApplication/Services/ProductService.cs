@@ -11,11 +11,13 @@ namespace CoffeeStoreApplication.Services
     {
         private readonly IRepository<int, Product> _repository;
         private readonly IMapper _mapper;
+        private readonly ILogger<ProductService> _logger;
 
-        public ProductService(IRepository<int, Product> repository, IMapper mapper)
+        public ProductService(IRepository<int, Product> repository, IMapper mapper, ILogger<ProductService> logger)
         {
             _repository = repository;
             _mapper = mapper;
+            _logger = logger;
         }
 
         /// <summary>
@@ -33,6 +35,7 @@ namespace CoffeeStoreApplication.Services
             var newProduct = await _repository.Add(product);
             if(newProduct == null)
             {
+                _logger.LogError("Unable to add product");
                 throw new UnableToAddProductException("Unable to add product at the moment");
             }
 
@@ -50,6 +53,7 @@ namespace CoffeeStoreApplication.Services
             var products = await _repository.GetAll();
             if(products == null)
             {
+                _logger.LogError("No products found");
                 throw new NoProductsFoundException($"No products found!!");
             }
             IList<ProductDTO> result = new List<ProductDTO>();
@@ -70,6 +74,7 @@ namespace CoffeeStoreApplication.Services
             var products = (await _repository.GetAll()).Where(p => p.Status == ProductStatus.Available);
             if(products == null)
             {
+                _logger.LogError("No products found");
                 throw new NoProductsFoundException($"No products found!!");
             }
             IList<ProductDTO> result = new List<ProductDTO>();
@@ -91,6 +96,7 @@ namespace CoffeeStoreApplication.Services
             var product = await _repository.GetById(id);
             if(product == null)
             {
+                _logger.LogError("No product found");
                 throw new NoSuchProductException($"No product with ID {id} exists");
             }
             ProductDTO productDTO = _mapper.Map<ProductDTO>(product);
@@ -108,9 +114,10 @@ namespace CoffeeStoreApplication.Services
         {
             IList<Product> products = (await _repository.GetAll()).Where(p => p.Category.ToString() == category).ToList();
 
-            if (products.Count == 0)
+            if (products.Count == 0){
+                _logger.LogError("No products found");
                 throw new NoProductsFoundException($"No products found");
-
+            }
             IList<ProductDTO> result = new List<ProductDTO>();
             foreach (var item in products)
             {
@@ -128,9 +135,12 @@ namespace CoffeeStoreApplication.Services
         /// <exception cref="NoSuchProductException">If the product is not found</exception>
         public async Task<ProductPriceDTO> UpdatePrice(ProductPriceDTO productPriceDTO)
         {
-            var product = await _repository.GetById(productPriceDTO.Id);
+            var product = (await _repository.GetAll()).FirstOrDefault(p => p.Name == productPriceDTO.Name);
             if (product == null)
-                throw new NoSuchProductException($"No product with ID {productPriceDTO.Id} exists");
+            {
+                _logger.LogError("No product found");
+                throw new NoSuchProductException($"No product with Name {productPriceDTO.Name} exists");
+            }
             
             product.Price = productPriceDTO.Price;
             var updatedProduct = await _repository.Update(product);
@@ -147,11 +157,22 @@ namespace CoffeeStoreApplication.Services
         /// <exception cref="NoSuchProductException">If the product is not found</exception>
         public async Task<ProductStatusDTO> UpdateProductStatus(ProductStatusDTO productStatusDTO)
         {
-            var product = await _repository.GetById(productStatusDTO.Id);
+            var product = (await _repository.GetAll()).FirstOrDefault(p=>p.Name == productStatusDTO.Name);
             if (product == null)
-                throw new NoSuchProductException($"No product with ID {productStatusDTO.Id} exists");
+            {
+                _logger.LogError("No product found");
+                throw new NoSuchProductException($"No product with Name {productStatusDTO.Name} exists"); 
+            }
 
             product.Status = (ProductStatus)Enum.Parse(typeof(ProductStatus), productStatusDTO.Status);
+            if(product.Status == ProductStatus.Unavailable || product.Status == ProductStatus.Discontinued)
+            {
+                product.Stock = 0;
+            }
+            else
+            {
+                product.Stock = 10;
+            }
             var updatedProduct = await _repository.Update(product);
 
             productStatusDTO = _mapper.Map<ProductStatusDTO>(updatedProduct);
@@ -166,15 +187,46 @@ namespace CoffeeStoreApplication.Services
         /// <exception cref="NoSuchProductException">If the product is not found</exception>
         public async Task<ProductStockDTO> UpdateProductStock(ProductStockDTO productStockDTO)
         {
-            var product = await _repository.GetById(productStockDTO.Id);
+            var product = (await _repository.GetAll()).FirstOrDefault(p=> p.Name == productStockDTO.Name);
             if (product == null)
-                throw new NoSuchProductException($"No product with ID {productStockDTO.Id} exists");
+            {
+                _logger.LogError("No product found");
+                throw new NoSuchProductException($"No product with Name {productStockDTO.Name} exists");
+            }
 
             product.Stock = productStockDTO.Stock;
+            if(product.Stock <= 0)
+            {
+                product.Status = ProductStatus.Unavailable;
+            }
+            else if(product.Stock >= 1)
+            {
+                product.Status = ProductStatus.Available;
+            }
+
             var updatedProduct = await _repository.Update(product);
 
             productStockDTO = _mapper.Map<ProductStockDTO>(updatedProduct);
             return productStockDTO;
+        }
+
+        /// <summary>
+        /// Gets Product details using name
+        /// </summary>
+        /// <param name="name">Product name</param>
+        /// <returns>ProductDTO containing the product with the given name</returns>
+        /// <exception cref="NoSuchProductException">If the product is not found</exception>
+        public async Task<ProductDTO> GetByName(string name)
+        {
+            var product = (await _repository.GetAll()).FirstOrDefault(p=>p.Name ==  name);
+            if (product == null)
+            {
+                _logger.LogError("No product found");
+                throw new NoSuchProductException($"No product with name {name} exists");
+            }
+            ProductDTO productDTO = _mapper.Map<ProductDTO>(product);
+
+            return productDTO;
         }
     }
 }

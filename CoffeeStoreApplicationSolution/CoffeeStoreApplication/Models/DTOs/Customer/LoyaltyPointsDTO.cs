@@ -1,8 +1,14 @@
-﻿namespace CoffeeStoreApplication.Models.DTOs.Customer
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace CoffeeStoreApplication.Models.DTOs.Customer
 {
     public class LoyaltyPointsDTO
     {
-        public int CustomerId { get; set; }
+        [Required]
+        [EmailAddress]
+        public string Email { get; set; }
+
+        [Required]
         public int LoyaltyPoints { get; set; }
     }
 }

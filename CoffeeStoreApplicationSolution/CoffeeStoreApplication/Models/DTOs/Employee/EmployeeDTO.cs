@@ -24,6 +24,7 @@ namespace CoffeeStoreApplication.Models.DTOs.Employee
         public DateTime DateOfBirth { get; set; }
         public float? Salary { get; set; }
 
+        public string Status { get; set; }
 
         public string Role { get; set; }
     }
