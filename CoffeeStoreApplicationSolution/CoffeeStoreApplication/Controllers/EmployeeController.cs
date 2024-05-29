@@ -1,10 +1,12 @@
-﻿using CoffeeStoreApplication.Interfaces;
+﻿using CoffeeStoreApplication.Exceptions.EmployeeExceptions;
+using CoffeeStoreApplication.Interfaces;
 using CoffeeStoreApplication.Models;
 using CoffeeStoreApplication.Models.DTOs.Employee;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections;
+using System.Security.Claims;
 
 namespace CoffeeStoreApplication.Controllers
 {
@@ -65,6 +67,11 @@ namespace CoffeeStoreApplication.Controllers
         {
             try
             {
+                var claim = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
+                var empId = Convert.ToInt32(claim);
+                if (empId == employeeSalary.EmployeeId) {
+                    throw new UnableToUpdateEmployeeException("Admin cannot update their own salary");
+                }
                 var employee = await _employeeService.UpdateSalary(employeeSalary);
                 return Ok(employee);
             }

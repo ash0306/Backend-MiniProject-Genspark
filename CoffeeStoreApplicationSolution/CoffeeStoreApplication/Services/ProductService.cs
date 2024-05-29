@@ -28,6 +28,11 @@ namespace CoffeeStoreApplication.Services
         /// <exception cref="UnableToAddProductException">If unable to add the product</exception>
         public async Task<ProductDTO> AddProduct(ProductDTO productDTO)
         {
+            var prod = (await _repository.GetAll()).FirstOrDefault(p => p.Name == productDTO.Name);
+            if(prod != null)
+            {
+                throw new UnableToAddProductException("Product with that name already exists");
+            }
             Product product = _mapper.Map<Product>(productDTO);
             product.Category = (ProductCategory)Enum.Parse(typeof(ProductCategory), productDTO.Category);
             product.Status = (ProductStatus)Enum.Parse(typeof(ProductStatus), productDTO.Status);

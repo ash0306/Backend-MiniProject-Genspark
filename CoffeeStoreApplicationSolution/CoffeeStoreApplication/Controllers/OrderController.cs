@@ -1,4 +1,5 @@
-﻿using CoffeeStoreApplication.Interfaces;
+﻿using CoffeeStoreApplication.Exceptions.OrderExceptions;
+using CoffeeStoreApplication.Interfaces;
 using CoffeeStoreApplication.Models;
 using CoffeeStoreApplication.Models.DTOs.CustomerOrder;
 using CoffeeStoreApplication.Models.DTOs.Order;
@@ -8,6 +9,7 @@ using CoffeeStoreApplication.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace CoffeeStoreApplication.Controllers
 {
@@ -32,12 +34,18 @@ namespace CoffeeStoreApplication.Controllers
         [HttpPost("addOrder")]
         [ProducesResponseType(typeof(OrderReturnDTO), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status400BadRequest)]
-        public async Task<ActionResult<OrderReturnDTO>> AddProduct(OrderDTO orderDTO)
+        public async Task<ActionResult<OrderReturnDTO>> AddOrder(OrderDTO orderDTO)
         {
             try
             {
-                var result = await _orderService.AddOrder(orderDTO);
-                return Ok(result);
+                var claim = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
+                var customerId = Convert.ToInt32(claim);
+                if(customerId == orderDTO.CustomerId)
+                {
+                    var result = await _orderService.AddOrder(orderDTO);
+                    return Ok(result);
+                }
+                throw new UnableToAddOrderException("Logged in customer and customer ID in order aren't same");
             }
             catch (Exception ex)
             {

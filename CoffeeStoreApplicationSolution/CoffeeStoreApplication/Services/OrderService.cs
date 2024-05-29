@@ -53,11 +53,11 @@ namespace CoffeeStoreApplication.Services
             float totalPrice = 0;
             float loyaltyDiscount = 0;
             IList<OrderItem> orderItems = new List<OrderItem>();
-
             if(orderDTO.OrderItems.Count() == 0) {
                 _logger.LogError("No items in order");
                 throw new NoItemsFoundException("This order has no items!! Add atleast 1 item to place an order.");
             }
+
             totalPrice = await CalculateTotalPrice(orderDTO);
 
             if(orderDTO.UseLoyaltyPoints)
@@ -115,7 +115,7 @@ namespace CoffeeStoreApplication.Services
                 if (product == null)
                     throw new NoSuchProductException("No product with the given name found");
                 if (product.Stock < 1)
-                    throw new ProductOutOfStockException("The product isnt available");
+                    throw new ProductOutOfStockException($"The product {product.Name} isnt available");
                 totalPrice += product.Price;
             }
             return totalPrice;
@@ -215,7 +215,9 @@ namespace CoffeeStoreApplication.Services
                 throw new UnableToCancelOrderException("Your order is already being prepared so cannot cancel order");
             }
             var items = (await _orderItemRepository.GetAll()).Where(oi => oi.OrderId == order.Id);
-            
+            var customer = await _customerRepository.GetById(order.CustomerId);
+            customer.LoyaltyPoints -= (int)order.LoyaltyPointsDiscount;
+            await _customerRepository.Update(customer);
             foreach (var item in items)
             {
                 var product = await _productRepository.GetById(item.ProductId);

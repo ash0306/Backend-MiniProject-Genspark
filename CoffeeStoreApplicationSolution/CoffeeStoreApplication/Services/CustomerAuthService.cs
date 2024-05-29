@@ -58,10 +58,10 @@ namespace CoffeeStoreApplication.Services
                 
                 return returnDTO;
             }
-            catch
+            catch(Exception ex) 
             {
                 _logger.LogCritical("Could not Register");
-                throw new UnableToRegisterException($"Unable to register at the moment");
+                throw new UnableToRegisterException(ex.Message);
             }
         }
 
