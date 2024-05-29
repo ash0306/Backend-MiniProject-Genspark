@@ -159,6 +159,13 @@ namespace CoffeeStoreUnitTest.ServiceTest
         }
 
         [Test, Order(15)]
+        public async Task ProductMenu_Success()
+        {
+            var result = await _productService.GetProductMenu();
+            Assert.AreEqual(1, result.Count());
+        }
+
+        [Test, Order(16)]
         public void GetAllProducts_Failure()
         {
             // Clear the database
@@ -171,8 +178,7 @@ namespace CoffeeStoreUnitTest.ServiceTest
             Assert.ThrowsAsync<NoProductsFoundException>(async () => await _productService.GetAllProducts());
         }
 
-
-        [Test, Order(16)]
+        [Test, Order(17)]
         public async Task GetAllAvailableProducts_Failure()
         {
             var productStatusDTO = new ProductStatusDTO { Name = "Latte", Status = "Unavailable" };
@@ -181,6 +187,40 @@ namespace CoffeeStoreUnitTest.ServiceTest
             await _productService.UpdateProductStatus(productStatusDTO1);
             var result = await _productService.GetAllAvailableProducts();
             Assert.AreEqual(0, result.Count());
+        }
+
+        [Test, Order(18)]
+        public async Task ProductMenu_Failure()
+        {
+            foreach (var product in _context.Products)
+            {
+                _context.Products.Remove(product);
+            }
+            _context.SaveChanges();
+
+            Assert.ThrowsAsync<NoProductsFoundException>(async () => await _productService.GetProductMenu());
+        }
+
+        [Test, Order(18)]
+        public async Task AddProduct_Success()
+        {
+            ProductDTO productDTO = new ProductDTO() { 
+                Name = "Watermelon Fresher",
+                Description = "",
+                Price = 100,
+                Status = ProductStatus.Available.ToString(),
+                Stock = 10,
+                Category = ProductCategory.ColdDrinks.ToString()
+            };
+            var result = await _productService.AddProduct(productDTO);
+            Assert.IsNotNull(result);
+        }
+        
+        [Test, Order(19)]
+        public async Task AddProduct_Failure()
+        {
+            ProductDTO productDTO = new ProductDTO();
+            Assert.ThrowsAsync<ArgumentNullException>(async () => await _productService.AddProduct(productDTO));
         }
     }
 }

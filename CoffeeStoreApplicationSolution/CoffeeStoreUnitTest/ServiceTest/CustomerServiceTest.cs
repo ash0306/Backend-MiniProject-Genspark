@@ -126,11 +126,11 @@ namespace CoffeeStoreUnitTest.ServiceTest
         {
             UpdatePhoneDTO dto = new UpdatePhoneDTO()
             {
-                CustomerId = 2,
+                Email = "test2@gamil.com",
                 Phone = "1234567899"
             };
             var result = await customerService.UpdatePhone(dto);
-            Assert.AreEqual(result.CustomerId, dto.CustomerId);
+            Assert.AreEqual(result.Email, dto.Email);
         }
 
         [Test, Order(9)]
@@ -138,7 +138,7 @@ namespace CoffeeStoreUnitTest.ServiceTest
         {
             UpdatePhoneDTO dto = new UpdatePhoneDTO()
             {
-                CustomerId = 99,
+                Email = "test@test.com",
                 Phone = "1234567899"
             };
             Assert.ThrowsAsync<NoSuchCustomerException>(async () => await customerService.UpdatePhone(dto));

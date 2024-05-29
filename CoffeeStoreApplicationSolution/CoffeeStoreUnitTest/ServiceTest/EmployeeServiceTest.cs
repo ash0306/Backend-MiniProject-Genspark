@@ -68,9 +68,22 @@ namespace CoffeeStoreUnitTest.ServiceTest
                 PasswordHashKey = hmac.Key,
                 HashedPassword = hmac.ComputeHash(Encoding.UTF8.GetBytes("employee123"))
             };
+            Employee employee3 = new Employee()
+            {
+                Name = "Joe Smith",
+                Email = "joe.smith@example.com",
+                Phone = "0887654321",
+                Role = RoleType.Admin,
+                Salary = 50000,
+                Status = EmployeeStatus.Active,
+                DateOfBirth = DateTime.Now,
+                PasswordHashKey = hmac.Key,
+                HashedPassword = hmac.ComputeHash(Encoding.UTF8.GetBytes("employee123"))
+            };
 
             await repository.Add(employee1);
             await repository.Add(employee2);
+            await repository.Add(employee3);
 
             #endregion
         }
@@ -80,23 +93,46 @@ namespace CoffeeStoreUnitTest.ServiceTest
         {
             var result = await employeeService.GetAllEmployees();
 
-            Assert.AreEqual(2, result.Count());
+            Assert.AreEqual(3, result.Count());
         }
 
         [Test, Order(2)]
+        public async Task GetAllAdminSuccessTest()
+        {
+            var result = await employeeService.GetAllAdmins();
+
+            Assert.IsNotNull(result);
+        }
+        
+        [Test, Order(3)]
+        public async Task GetAllManagerSuccessTest()
+        {
+            var result = await employeeService.GetAllManagers();
+
+            Assert.IsNotNull(result);
+        }
+        [Test, Order(4)]
+        public async Task GetAllBaristaSuccessTest()
+        {
+            var result = await employeeService.GetAllBaristas();
+
+            Assert.IsNotNull(result);
+        }
+
+        [Test, Order(5)]
         public async Task GetByIdSuccessTest()
         {
             var result = await employeeService.GetEmployeeById(1);
             Assert.AreEqual("John Doe", result.Name);
         }
 
-        [Test, Order(3)]
+        [Test, Order(6)]
         public async Task GetByIdFailureTest()
         {
             Assert.ThrowsAsync<NoSuchEmployeeException>(async () => await employeeService.GetEmployeeById(99));
         }
 
-        [Test, Order(4)]
+        [Test, Order(7)]
         public async Task UpdateSalarySuccessTest()
         {
             EmployeeSalaryDTO dto = new EmployeeSalaryDTO()
@@ -108,7 +144,7 @@ namespace CoffeeStoreUnitTest.ServiceTest
             Assert.AreEqual(result.EmployeeId, dto.EmployeeId);
         }
 
-        [Test, Order(5)]
+        [Test, Order(8)]
         public async Task UpdateSalaryFailureTest()
         {
             EmployeeSalaryDTO dto = new EmployeeSalaryDTO()
@@ -119,33 +155,33 @@ namespace CoffeeStoreUnitTest.ServiceTest
             Assert.ThrowsAsync<NoSuchEmployeeException>(async () => await employeeService.UpdateSalary(dto));
         }
 
-        [Test, Order(6)]
+        [Test, Order(9)]
         public async Task ActivateEmployeeSuccessTest()
         {
             var result = await employeeService.ActivateEmployee(2);
             Assert.AreEqual("Active", result.EmployeeStatus);
         }
 
-        [Test, Order(7)]
+        [Test, Order(10)]
         public async Task ActivateEmployeeFailureTest()
         {
             Assert.ThrowsAsync<NoSuchEmployeeException>(async () => await employeeService.ActivateEmployee(99));
         }
 
-        [Test, Order(8)]
+        [Test, Order(11)]
         public async Task DeactivateEmployeeSuccessTest()
         {
             var result = await employeeService.DeactivateEmployee(1);
             Assert.AreEqual("Inactive", result.EmployeeStatus);
         }
 
-        [Test, Order(9)]
+        [Test, Order(12)]
         public async Task DeactivateEmployeeFailureTest()
         {
             Assert.ThrowsAsync<NoSuchEmployeeException>(async () => await employeeService.DeactivateEmployee(99));
         }
 
-        [Test, Order(10)]
+        [Test, Order(13)]
         public async Task GetAllFailureTest()
         {
             foreach (var employee in context.Employees)
@@ -156,5 +192,41 @@ namespace CoffeeStoreUnitTest.ServiceTest
 
             Assert.ThrowsAsync<NoEmployeesFoundException>(async () => await employeeService.GetAllEmployees());
         }
+
+        [Test, Order(14)]
+        public async Task GetAllAdminsFailureTest()
+        {
+            foreach (var employee in context.Employees)
+            {
+                context.Employees.Remove(employee);
+            }
+            await context.SaveChangesAsync();
+
+            Assert.ThrowsAsync<NoEmployeesFoundException>(async () => await employeeService.GetAllEmployees());
+        }
+
+        [Test, Order(15)]
+        public async Task GetAllManagersFailureTest()
+        {
+            foreach (var employee in context.Employees)
+            {
+                context.Employees.Remove(employee);
+            }
+            await context.SaveChangesAsync();
+
+            Assert.ThrowsAsync<NoEmployeesFoundException>(async () => await employeeService.GetAllEmployees());
+        }
+        [Test, Order(16)]
+        public async Task GetAllBaristasFailureTest()
+        {
+            foreach (var employee in context.Employees)
+            {
+                context.Employees.Remove(employee);
+            }
+            await context.SaveChangesAsync();
+
+            Assert.ThrowsAsync<NoEmployeesFoundException>(async () => await employeeService.GetAllEmployees());
+        }
+
     }
 }
