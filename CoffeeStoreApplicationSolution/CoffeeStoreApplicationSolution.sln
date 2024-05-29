@@ -5,6 +5,8 @@ VisualStudioVersion = 17.9.34723.18
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CoffeeStoreApplication", "CoffeeStoreApplication\CoffeeStoreApplication.csproj", "{DC10D5D5-EF50-4A10-A54B-C0B822E0E9A8}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CoffeeStoreUnitTest", "CoffeeStoreUnitTest\CoffeeStoreUnitTest.csproj", "{49D26D60-DB22-46F9-856D-205B0BB8129B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
