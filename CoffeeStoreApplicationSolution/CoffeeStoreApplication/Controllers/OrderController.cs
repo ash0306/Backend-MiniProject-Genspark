@@ -100,7 +100,7 @@ namespace CoffeeStoreApplication.Controllers
             }
         }
 
-        [Authorize(Roles = "Customer")]
+        [Authorize(Roles = "Customer,Manager")]
         [HttpGet("getOrderByCustomerId")]
         [ProducesResponseType(typeof(IEnumerable<CustomerOrderReturnDTO>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status404NotFound)]

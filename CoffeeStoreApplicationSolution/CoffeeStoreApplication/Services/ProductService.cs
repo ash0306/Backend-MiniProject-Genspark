@@ -228,5 +228,22 @@ namespace CoffeeStoreApplication.Services
 
             return productDTO;
         }
+
+
+        public async Task<IEnumerable<IGrouping<string, CustomerProductDTO>>> GetProductMenu()
+        {
+            var products = (await _repository.GetAll())
+                .Where(p => p.Status == ProductStatus.Available);
+
+            IList<CustomerProductDTO> productDTOs = new List<CustomerProductDTO>();
+            foreach (var item in products)
+            {
+                productDTOs.Add(_mapper.Map<CustomerProductDTO>(item));
+            }
+
+            var result = productDTOs.GroupBy(p => p.Category);
+
+            return result;
+        }
     }
 }
