@@ -216,7 +216,7 @@ namespace CoffeeStoreApplication.Services
             }
             var items = (await _orderItemRepository.GetAll()).Where(oi => oi.OrderId == order.Id);
             var customer = await _customerRepository.GetById(order.CustomerId);
-            customer.LoyaltyPoints -= (int)order.LoyaltyPointsDiscount;
+            customer.LoyaltyPoints += (int)order.LoyaltyPointsDiscount;
             await _customerRepository.Update(customer);
             foreach (var item in items)
             {
