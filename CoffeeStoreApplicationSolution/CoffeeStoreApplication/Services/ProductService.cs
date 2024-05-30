@@ -176,7 +176,7 @@ namespace CoffeeStoreApplication.Services
             }
             else
             {
-                product.Stock = 10;
+                product.Stock = (int)productStatusDTO.Stock;
             }
             var updatedProduct = await _repository.Update(product);
 

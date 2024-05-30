@@ -12,5 +12,7 @@ namespace CoffeeStoreApplication.Models.DTOs.Product
         [Required]
         [EnumValidation(typeof(ProductStatus))]
         public string Status { get; set; }
+
+        public int? Stock {  get; set; }
     }
 }

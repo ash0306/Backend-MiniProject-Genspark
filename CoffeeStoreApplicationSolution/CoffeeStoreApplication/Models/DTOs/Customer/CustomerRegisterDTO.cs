@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using CoffeeStoreApplication.Validations;
+using System.ComponentModel.DataAnnotations;
 
 namespace CoffeeStoreApplication.Models.DTOs.Customer
 {
@@ -17,6 +18,7 @@ namespace CoffeeStoreApplication.Models.DTOs.Customer
         public string Phone { get; set; }
 
         [Required]
+        [DateTimeAgeValidation]
         public DateTime DateOfBirth { get; set; }
 
         [Required]
