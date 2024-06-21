@@ -7,6 +7,7 @@ using CoffeeStoreApplication.Models.DTOs.OrderItems;
 using CoffeeStoreApplication.Models.DTOs.Product;
 using CoffeeStoreApplication.Services;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
@@ -15,6 +16,7 @@ namespace CoffeeStoreApplication.Controllers
 {
     [Route("api/orders")]
     [ApiController]
+    [EnableCors("AllowSpecificOrigin")]
     public class OrderController : ControllerBase
     {
         private readonly IOrderItemService _orderItemService;

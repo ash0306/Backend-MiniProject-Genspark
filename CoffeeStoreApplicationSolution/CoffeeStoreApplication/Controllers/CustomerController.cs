@@ -2,6 +2,7 @@
 using CoffeeStoreApplication.Models;
 using CoffeeStoreApplication.Models.DTOs.Customer;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -9,6 +10,7 @@ namespace CoffeeStoreApplication.Controllers
 {
     [Route("api/customer")]
     [ApiController]
+    [EnableCors("AllowSpecificOrigin")]
     public class CustomerController : ControllerBase
     {
         private readonly ICustomerService _customerService;
@@ -56,7 +58,7 @@ namespace CoffeeStoreApplication.Controllers
             }
         }
 
-        [Authorize(Roles = "Admin,Manager")]
+        [Authorize(Roles = "Admin,Manager,Barista")]
         [HttpGet("getAll")]
         [ProducesResponseType(typeof(CustomerDTO), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status404NotFound)]
@@ -74,7 +76,7 @@ namespace CoffeeStoreApplication.Controllers
             }
         }
 
-        [Authorize(Roles = "Admin,Manager")]
+        [Authorize(Roles = "Admin,Manager,Customer")]
         [HttpGet("getById")]
         [ProducesResponseType(typeof(CustomerDTO), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status404NotFound)]
@@ -92,7 +94,7 @@ namespace CoffeeStoreApplication.Controllers
             }
         }
 
-        [Authorize(Roles = "Admin,Manager")]
+        [Authorize(Roles = "Admin,Manager,Barista")]
         [HttpGet("getByEmail")]
         [ProducesResponseType(typeof(CustomerDTO), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status404NotFound)]

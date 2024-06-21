@@ -23,6 +23,17 @@ namespace CoffeeStoreApplication
             // Add services to the container.
 
             builder.Services.AddControllers();
+
+            // Configure CORS
+            builder.Services.AddCors(options =>
+            {
+                options.AddPolicy("AllowSpecificOrigin",
+                    builder => builder.WithOrigins("http://127.0.0.1:5500")
+                                      .AllowAnyHeader()
+                                      .AllowAnyMethod());
+            });
+
+
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen(option =>
@@ -113,6 +124,9 @@ namespace CoffeeStoreApplication
                 app.UseSwagger();
                 app.UseSwaggerUI();
             }
+
+            // Use CORS
+            app.UseCors("AllowSpecificOrigin");
 
             app.UseAuthentication();
             app.UseAuthorization();

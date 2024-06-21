@@ -2,6 +2,7 @@
 using CoffeeStoreApplication.Models;
 using CoffeeStoreApplication.Models.DTOs.Product;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -9,6 +10,7 @@ namespace CoffeeStoreApplication.Controllers
 {
     [Route("api/product")]
     [ApiController]
+    [EnableCors("AllowSpecificOrigin")]
     public class ProductController : ControllerBase
     {
         private readonly IProductService _productService;

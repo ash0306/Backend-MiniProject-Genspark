@@ -3,6 +3,7 @@ using CoffeeStoreApplication.Interfaces;
 using CoffeeStoreApplication.Models;
 using CoffeeStoreApplication.Models.DTOs.Employee;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections;
@@ -12,6 +13,7 @@ namespace CoffeeStoreApplication.Controllers
 {
     [Route("api/employee")]
     [ApiController]
+    [EnableCors("AllowSpecificOrigin")]
     public class EmployeeController : ControllerBase
     {
         private readonly IEmployeeService _employeeService;
@@ -41,7 +43,7 @@ namespace CoffeeStoreApplication.Controllers
             }
         }
 
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin,Manager,Barista")]
         [HttpGet("getById")]
         [ProducesResponseType(typeof(EmployeeDTO), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status404NotFound)]

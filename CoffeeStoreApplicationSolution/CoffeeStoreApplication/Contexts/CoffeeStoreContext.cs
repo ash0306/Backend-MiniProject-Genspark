@@ -78,7 +78,8 @@ namespace CoffeeStoreApplication.Contexts
                     Category = ProductCategory.HotDrinks,
                     Price = 100,
                     Stock = 50,
-                    Status = ProductStatus.Available
+                    Status = ProductStatus.Available,
+                    Image = "https://img.freepik.com/free-vector/realistic-cup-black-brewed-coffee-saucer-vector-illustration_1284-66002.jpg?t=st=1718614373~exp=1718617973~hmac=a5c17f4a2e84d0f7b60ef86b88bb2776f8d0aa34a46139ea578010a7d37517a1&w=740"
                 },
                 new Product()
                 {
@@ -88,7 +89,8 @@ namespace CoffeeStoreApplication.Contexts
                     Category = ProductCategory.HotDrinks,
                     Price = 130,
                     Stock = 50,
-                    Status = ProductStatus.Available
+                    Status = ProductStatus.Available,
+                    Image = "https://images.unsplash.com/photo-1602320574582-741740d4fcd7?q=80&w=1887&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
                 },
                 new Product()
                 {
@@ -98,7 +100,8 @@ namespace CoffeeStoreApplication.Contexts
                     Category = ProductCategory.ColdDrinks,
                     Price = 110,
                     Stock = 50,
-                    Status = ProductStatus.Available
+                    Status = ProductStatus.Available,
+                    Image = "https://images.unsplash.com/photo-1581996323441-538096e854b9?q=80&w=1936&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
                 },
                 new Product()
                 {
@@ -108,7 +111,8 @@ namespace CoffeeStoreApplication.Contexts
                     Category = ProductCategory.Snacks,
                     Price = 120,
                     Stock = 50,
-                    Status = ProductStatus.Available
+                    Status = ProductStatus.Available,
+                    Image = "https://plus.unsplash.com/premium_photo-1671559021919-19d9610c8cad?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
                 }
                 );
 

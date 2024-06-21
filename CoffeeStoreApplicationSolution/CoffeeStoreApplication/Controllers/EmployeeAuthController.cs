@@ -6,11 +6,13 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using CoffeeStoreApplication.Interfaces;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Cors;
 
 namespace CoffeeStoreApplication.Controllers
 {
     [Route("api/employee")]
     [ApiController]
+    [EnableCors("AllowSpecificOrigin")]
     public class EmployeeAuthController : ControllerBase
     {
         private readonly IAuthLoginService<EmployeeLoginReturnDTO, EmployeeLoginDTO> _authLoginService;

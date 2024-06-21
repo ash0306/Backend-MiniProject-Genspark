@@ -4,6 +4,7 @@ using CoffeeStoreApplication.Models.DTOs.Customer;
 using CoffeeStoreApplication.Models.Enum;
 using CoffeeStoreApplication.Services;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -11,6 +12,7 @@ namespace CoffeeStoreApplication.Controllers
 {
     [Route("api/customer")]
     [ApiController]
+    [EnableCors("AllowSpecificOrigin")]
     public class CustomerAuthController : ControllerBase
     {
         private readonly IAuthLoginService<CustomerLoginReturnDTO, CustomerLoginDTO> _authLoginService;
